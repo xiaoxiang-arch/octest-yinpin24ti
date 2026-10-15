@@ -14,7 +14,6 @@ html, body {
 }
 body { padding-bottom: 60px; }
 
-/* ===== 背景网格（答题页 / 通用） ===== */
 .pixel-grid {
   position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.08;
   background-image:
@@ -23,15 +22,12 @@ body { padding-bottom: 60px; }
   background-size: 24px 24px;
 }
 
-/* ===== 页面容器 ===== */
 .page { position: relative; z-index: 1; width: 100%; max-width: 520px; margin: 0 auto; padding: 32px 20px 80px; display: none; }
 .page.active { display: block; animation: fadeIn 0.5s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ===== 水印 ===== */
 .watermark { position: fixed; left: 0; right: 0; bottom: 12px; text-align: center; font-size: 11px; letter-spacing: 1px; color: rgba(255,255,255,0.28); pointer-events: none; z-index: 999; }
 
-/* ===== 首页 ===== */
 #pageHome { text-align: center; padding-top: 15vh; }
 .home-title { font-size: 26px; font-weight: 700; letter-spacing: 2px; margin-bottom: 24px; color: #fff; text-shadow: 0 0 18px rgba(255,255,255,0.18); }
 .home-intro { font-size: 14px; line-height: 2; color: rgba(255,255,255,0.78); text-align: left; margin-bottom: 36px; padding: 0 4px; }
@@ -43,7 +39,6 @@ body { padding-bottom: 60px; }
 .home-deco { margin-top: 40px; display: flex; justify-content: center; gap: 18px; opacity: 0.5; }
 .home-deco svg { width: 36px; height: 36px; }
 
-/* ===== 答题页 ===== */
 #pageQuiz { padding-top: 24px; transition: background 0.5s ease; }
 .quiz-top { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 14px; }
 .quiz-progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.12); margin-bottom: 34px; overflow: hidden; }
@@ -60,14 +55,8 @@ body { padding-bottom: 60px; }
 .quiz-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
 .quiz-nav button:not(:disabled):active { background: rgba(255,255,255,0.16); }
 
-/* ===== 结果页 ===== */
-#pageResult { padding-top: 30px; transition: background 0.6s ease; position: relative; }
-#pageResult .pixel-grid { display: none; }
-
-/* 结果页主题变量，JS 会动态写入 --main / --sub / --text / --card / --border */
-#pageResult {
-  --main: #888;
-  --sub: #ccc;
+#pageResult { padding-top: 30px; transition: background 0.6s ease; position: relative;
+  --main: #888; --sub: #ccc;
   --text: #fff;
   --text-soft: rgba(255,255,255,0.85);
   --card: rgba(255,255,255,0.09);
@@ -77,8 +66,8 @@ body { padding-bottom: 60px; }
   --shadow: rgba(0,0,0,0.25);
   color: var(--text);
 }
+#pageResult .pixel-grid { display: none; }
 
-/* 结果页背景网格（由 JS 按风格切换） */
 .result-grid {
   position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.16;
   background-image:
@@ -89,7 +78,6 @@ body { padding-bottom: 60px; }
 }
 #pageResult.active .result-grid { display: block; }
 
-/* 可爱风装饰层 */
 .cute-deco { position: fixed; inset: 0; pointer-events: none; z-index: 0; display: none; }
 #pageResult.style-cute .cute-deco { display: block; }
 .cute-deco .dot {
@@ -102,7 +90,6 @@ body { padding-bottom: 60px; }
   100% { transform: translateY(-90px) scale(0.5); opacity: 0; }
 }
 
-/* 成熟风细线光晕层 */
 .mature-deco { position: fixed; inset: 0; pointer-events: none; z-index: 0; display: none; }
 #pageResult.style-mature .mature-deco { display: block; }
 .mature-deco .spark {
@@ -115,7 +102,6 @@ body { padding-bottom: 60px; }
   100% { transform: translateY(-60px); opacity: 0; }
 }
 
-/* 结果页内容 */
 .result-rare-tag {
   display: inline-block; padding: 4px 12px; font-size: 12px; letter-spacing: 2px;
   color: #fff; background: rgba(255,255,255,0.14); border: 2px solid rgba(255,255,255,0.6);
@@ -205,20 +191,17 @@ body { padding-bottom: 60px; }
 .similar-item svg { width: 64px; height: 64px; display: block; margin: 0 auto 6px; }
 .similar-name { font-size: 13px; line-height: 1.5; color: var(--text-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 84px; }
 
-.result-export, .result-restart {
-  display: block; width: 90%; margin: 0 auto 14px; padding: 15px 20px;
+.result-restart {
+  display: block; width: 90%; margin: 36px auto 20px; padding: 15px 20px;
   font-size: 15px; letter-spacing: 2px; color: var(--text);
   background: var(--btn-bg); border: 2px solid var(--btn-border);
   cursor: pointer; font-family: inherit; transition: background 0.2s ease, transform 0.15s ease;
 }
-.result-export { margin-top: 36px; }
-.result-restart { margin-bottom: 20px; }
-#pageResult.style-cute .result-export, #pageResult.style-cute .result-restart { border-radius: 999px; }
-#pageResult.style-cute .result-export:active, #pageResult.style-cute .result-restart:active { transform: scale(0.96); }
-#pageResult.style-mature .result-export, #pageResult.style-mature .result-restart { border-radius: 4px; letter-spacing: 4px; }
-.result-export:active, .result-restart:active { background: rgba(255,255,255,0.16); }
+#pageResult.style-cute .result-restart { border-radius: 999px; }
+#pageResult.style-cute .result-restart:active { transform: scale(0.96); }
+#pageResult.style-mature .result-restart { border-radius: 4px; letter-spacing: 4px; }
+.result-restart:active { background: rgba(255,255,255,0.16); }
 
-/* 隐藏款粒子层 */
 .rare-particles { position: fixed; inset: 0; pointer-events: none; z-index: 2; display: none; }
 .rare-particles.active { display: block; }
 .rare-particle { position: absolute; width: 3px; height: 3px; background: #fff; opacity: 0.8; animation: particleFloat linear infinite; box-shadow: 0 0 6px rgba(255,255,255,0.8); }
@@ -228,17 +211,13 @@ body { padding-bottom: 60px; }
   100% { transform: translateY(-140px) scale(0.3); opacity: 0; }
 }
 
-/* 隐藏款背景呼吸 */
 #pageResult.hidden-mode { animation: bgBreath 6s ease-in-out infinite; }
 @keyframes bgBreath {
   0%,100% { filter: brightness(1); }
   50% { filter: brightness(1.12); }
 }
 
-/* 隐藏款星光炸开 */
-.rare-burst {
-  position: fixed; left: 50%; top: 40%; width: 0; height: 0; z-index: 3; pointer-events: none;
-}
+.rare-burst { position: fixed; left: 50%; top: 40%; width: 0; height: 0; z-index: 3; pointer-events: none; }
 .rare-burst span {
   position: absolute; left: 0; top: 0; width: 4px; height: 4px; background: #fff;
   border-radius: 50%; opacity: 0;
@@ -249,7 +228,6 @@ body { padding-bottom: 60px; }
   100% { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
 }
 
-/* 首页装饰 */
 @media (max-width: 380px) {
   .home-title { font-size: 22px; }
   .quiz-question { font-size: 16px; }
@@ -269,7 +247,6 @@ body { padding-bottom: 60px; }
 <div class="rare-particles" id="rareParticles"></div>
 <div class="rare-burst" id="rareBurst"></div>
 
-<!-- ===== 首页 ===== -->
 <div class="page active" id="pageHome">
   <h1 class="home-title">OC 印象饮品测试</h1>
   <p class="home-intro">每一个角色，都拥有一个属于自己的味道……有的是夏天，有的是冬天，有甜有涩，有酸有苦，所以，Ta 会是你想象中的那个口味吗？</p>
@@ -282,7 +259,6 @@ body { padding-bottom: 60px; }
   </div>
 </div>
 
-<!-- ===== 答题页 ===== -->
 <div class="page" id="pageQuiz">
   <div class="quiz-top"><span id="quizCounter">第 1 / 24 题</span><span id="quizGroupName"></span></div>
   <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quizProgressFill"></div></div>
@@ -291,7 +267,6 @@ body { padding-bottom: 60px; }
   <div class="quiz-nav"><button id="prevBtn" disabled>上一题</button><button id="nextBtn" disabled>下一题</button></div>
 </div>
 
-<!-- ===== 结果页 ===== -->
 <div class="page" id="pageResult">
   <div class="result-grid"></div>
   <div class="cute-deco" id="cuteDeco"></div>
@@ -308,7 +283,6 @@ body { padding-bottom: 60px; }
   <div class="result-card" id="cardRecipe"><div class="card-title">配方卡</div><div class="card-text" id="recipeText"></div></div>
   <div class="result-similar-title">或许你还会是……</div>
   <div class="similar-scroll" id="similarScroll"><div class="similar-track" id="similarTrack"></div></div>
-  <button class="result-export" id="exportBtn">一键导出饮品结果图</button>
   <button class="result-restart" id="restartBtn">重新调制</button>
 </div>
 
@@ -317,148 +291,148 @@ body { padding-bottom: 60px; }
 <script>
 const questions = [
   { id: 1, group: "A", groupName: "外在气质", text: "Ta 给人的第一眼，更适合用哪种颜色氛围来描述？", options: [
-    { text: "明亮的——像干净清澈的湖水，偏浅色", score: { bright: 2, refreshing: 1, sweet: 1 } },
-    { text: "浓郁的——如同色彩饱和的画作，偏暖色", score: { thick: 2, sweet: 1, hot: 1 } },
-    { text: "冷调感——低饱和的天空，偏灰蓝", score: { cold: 2, dark: 1, bitter: 1 } },
-    { text: "撞色——跳出规则的，不被单一感受约束", score: { complex: 2, bright: 1, exotic: 1 } }
+    { text: "明亮的——像干净清澈的湖水，偏浅色", score: { bright: 3, refreshing: 2, sweet: 1, soft: 1 } },
+    { text: "浓郁的——如同色彩饱和的画作，偏暖色", score: { thick: 3, sweet: 2, hot: 1, mature: 1 } },
+    { text: "冷调感——低饱和的天空，偏灰蓝", score: { cold: 3, dark: 2, bitter: 2, distance: 1 } },
+    { text: "撞色——跳出规则的，不被单一感受约束", score: { complex: 3, exotic: 2, bright: 1, premium: 1 } }
   ]},
   { id: 2, group: "A", groupName: "外在气质", text: "Ta 身上更常出现哪种质感？", options: [
-    { text: "气泡感，像一只小鹿轻柔地跳跃", score: { sparkling: 2, refreshing: 2, cold: 1 } },
-    { text: "奶感，宛如层层叠叠地厚实云朵", score: { creamy: 2, sweet: 1, thick: 1 } },
-    { text: "茶感，一汪碧绿色的清泉，干净，有回甘", score: { tea: 2, refreshing: 1, floral: 1 } },
-    { text: "烟熏感，凿不开的木头，木质，暗", score: { bitter: 2, dark: 2, spice: 1 } }
+    { text: "气泡感，像一只小鹿轻柔地跳跃", score: { sparkling: 3, refreshing: 2, cold: 1, bright: 1 } },
+    { text: "奶感，宛如层层叠叠地厚实云朵", score: { creamy: 3, sweet: 2, thick: 2, soft: 1 } },
+    { text: "茶感，一汪碧绿色的清泉，干净，有回甘", score: { tea: 3, refreshing: 2, floral: 1, bitter: 1 } },
+    { text: "烟熏感，凿不开的木头，木质，暗", score: { bitter: 3, dark: 2, spice: 2, mature: 1 } }
   ]},
   { id: 3, group: "A", groupName: "外在气质", text: "天气是一种感觉的直观表达，如果用一种天气描述Ta，你会选择？", options: [
-    { text: "像夏天的午后，阳光耀眼", score: { hot: 2, bright: 2, fruity: 1 } },
-    { text: "寒冷的冬夜，外面很冷，屋里却暖洋洋的", score: { hot: 1, thick: 2, mature: 1 } },
-    { text: "潮湿雨后，空气很干净，有青草的芬芳", score: { cold: 1, refreshing: 2, floral: 1 } },
-    { text: "起雾的清晨，看不远，模模糊糊的", score: { dark: 2, complex: 1, bitter: 1 } }
+    { text: "像夏天的午后，阳光耀眼", score: { hot: 3, bright: 3, fruity: 2, sparkling: 1 } },
+    { text: "寒冷的冬夜，外面很冷，屋里却暖洋洋的", score: { hot: 2, thick: 3, mature: 2, creamy: 1 } },
+    { text: "潮湿雨后，空气很干净，有青草的芬芳", score: { cold: 2, refreshing: 3, floral: 2, soft: 1 } },
+    { text: "起雾的清晨，看不远，模模糊糊的", score: { dark: 3, complex: 2, bitter: 2, distance: 1 } }
   ]},
   { id: 4, group: "A", groupName: "外在气质", text: "如果用一段声音来讲述Ta，更像？", options: [
-    { text: "气泡水开盖那一下，砰", score: { sparkling: 2, refreshing: 2, bright: 1 } },
-    { text: "咖啡机低沉的研磨声", score: { coffee: 2, bitter: 1, mature: 1 } },
-    { text: "雨落在叶子上的声音", score: { floral: 1, refreshing: 1, soft: 1 } },
-    { text: "老式唱片跳针的杂音", score: { complex: 2, dark: 1, exotic: 1 } }
+    { text: "气泡水开盖那一下，砰", score: { sparkling: 3, refreshing: 2, bright: 2, sweet: 1 } },
+    { text: "咖啡机低沉的研磨声", score: { coffee: 3, bitter: 2, mature: 2, dark: 1 } },
+    { text: "雨落在叶子上的声音", score: { floral: 2, refreshing: 2, soft: 2, tea: 1 } },
+    { text: "老式唱片跳针的杂音", score: { complex: 3, dark: 2, exotic: 2, mature: 1 } }
   ]},
   { id: 5, group: "B", groupName: "性格内核", text: "Ta 生气的时候，更接近哪种状态？", options: [
-    { text: "当场说清楚，问题不隔夜", score: { bright: 1, sour: 1, refreshing: 1 } },
-    { text: "不说话，自己消化", score: { bitter: 1, dark: 1, complex: 1 } },
-    { text: "冷处理，等对方先开口", score: { cold: 2, bitter: 1, distance: 1 } },
-    { text: "笑着翻篇，但记很久很久", score: { complex: 2, sweet: 1, dark: 1 } }
+    { text: "当场说清楚，问题不隔夜", score: { bright: 2, sour: 2, refreshing: 2, simple: 1 } },
+    { text: "不说话，自己消化", score: { bitter: 2, dark: 2, complex: 2, distance: 1 } },
+    { text: "冷处理，等对方先开口", score: { cold: 3, bitter: 2, distance: 2, mature: 1 } },
+    { text: "笑着翻篇，但记很久很久", score: { complex: 3, sweet: 1, dark: 2, distance: 1 } }
   ]},
   { id: 6, group: "B", groupName: "性格内核", text: "Ta 更容易被哪种内核打动？", options: [
-    { text: "直接、热烈的喜欢", score: { sweet: 2, hot: 1, bright: 1 } },
-    { text: "长期、安静的陪伴", score: { creamy: 1, tea: 1, soft: 1 } },
-    { text: "懂自己没说出口的部分", score: { complex: 2, bitter: 1, dark: 1 } },
-    { text: "稀有、特别、别人给不了的独特东西", score: { exotic: 2, premium: 1, complex: 1 } }
+    { text: "直接、热烈的喜欢", score: { sweet: 3, hot: 2, bright: 2, simple: 1 } },
+    { text: "长期、安静的陪伴", score: { creamy: 2, tea: 2, soft: 2, mature: 1 } },
+    { text: "懂自己没说出口的部分", score: { complex: 3, bitter: 2, dark: 2, distance: 1 } },
+    { text: "稀有、特别、别人给不了的独特东西", score: { exotic: 3, premium: 3, complex: 2, mature: 1 } }
   ]},
   { id: 7, group: "B", groupName: "性格内核", text: "假设将情绪比作容器，Ta 更像哪种杯子？", options: [
-    { text: "透明杯——一眼看到底", score: { refreshing: 2, bright: 1, simple: 1 } },
-    { text: "马克杯——握着很温暖，有分量", score: { creamy: 1, hot: 1, soft: 1 } },
-    { text: "高脚杯——精致，但有距离", score: { alcohol: 1, premium: 1, cold: 1 } },
-    { text: "特调杯——分层多，看不透", score: { complex: 2, dark: 1, exotic: 1 } }
+    { text: "透明杯——一眼看到底", score: { refreshing: 3, bright: 2, simple: 2, soft: 1 } },
+    { text: "马克杯——握着很温暖，有分量", score: { creamy: 2, hot: 2, soft: 2, thick: 1 } },
+    { text: "高脚杯——精致，但有距离", score: { alcohol: 2, premium: 2, cold: 2, mature: 1 } },
+    { text: "特调杯——分层多，看不透", score: { complex: 3, dark: 2, exotic: 2, premium: 1 } }
   ]},
   { id: 8, group: "B", groupName: "性格内核", text: "Ta 对“甜”的态度更接近？", options: [
-    { text: "喜欢甜，且不掩饰", score: { sweet: 2, bright: 1, fruity: 1 } },
-    { text: "可以甜，但不能完全是甜，要一点酸涩", score: { sweet: 1, sour: 1, fruity: 1 } },
-    { text: "更喜欢苦后回甘", score: { bitter: 2, tea: 1, mature: 1 } },
-    { text: "甜不是主要感知，更重要的是层次", score: { complex: 2, premium: 1, exotic: 1 } }
+    { text: "喜欢甜，且不掩饰", score: { sweet: 3, bright: 2, fruity: 2, simple: 1 } },
+    { text: "可以甜，但不能完全是甜，要一点酸涩", score: { sweet: 2, sour: 2, fruity: 2, refreshing: 1 } },
+    { text: "更喜欢苦后回甘", score: { bitter: 3, tea: 2, mature: 2, dark: 1 } },
+    { text: "甜不是主要感知，更重要的是层次", score: { complex: 3, premium: 2, exotic: 2, mature: 1 } }
   ]},
   { id: 9, group: "B", groupName: "性格内核", text: "Ta 的边界感更像？", options: [
-    { text: "没什么边界，谁都能靠近", score: { refreshing: 1, sweet: 1, simple: 1 } },
-    { text: "表面好相处，心里有数", score: { tea: 1, complex: 1, mature: 1 } },
-    { text: "边界很清楚，不熟别越线", score: { cold: 2, bitter: 1, distance: 1 } },
-    { text: "看人，对的人没有边界", score: { complex: 2, alcohol: 1, dark: 1 } }
+    { text: "没什么边界，谁都能靠近", score: { refreshing: 2, sweet: 2, simple: 2, soft: 1 } },
+    { text: "表面好相处，心里有数", score: { tea: 2, complex: 2, mature: 2, distance: 1 } },
+    { text: "边界很清楚，不熟别越线", score: { cold: 3, bitter: 2, distance: 2, mature: 1 } },
+    { text: "看人，对的人没有边界", score: { complex: 3, alcohol: 2, dark: 2, exotic: 1 } }
   ]},
   { id: 10, group: "B", groupName: "性格内核", text: "Ta 更习惯怎么处理心事？", options: [
-    { text: "把想法说出来，不憋着", score: { bright: 1, refreshing: 1, simple: 1 } },
-    { text: "找信任的人慢慢讲", score: { creamy: 1, tea: 1, soft: 1 } },
-    { text: "自己扛，扛不住才愿意说出口", score: { bitter: 2, mature: 1, dark: 1 } },
-    { text: "写成东西，或者做成别的事以宣泄", score: { complex: 2, exotic: 1, premium: 1 } }
+    { text: "把想法说出来，不憋着", score: { bright: 2, refreshing: 2, simple: 2, sweet: 1 } },
+    { text: "找信任的人慢慢讲", score: { creamy: 2, tea: 2, soft: 2, mature: 1 } },
+    { text: "自己扛，扛不住才愿意说出口", score: { bitter: 3, mature: 2, dark: 2, distance: 1 } },
+    { text: "写成东西，或者做成别的事以宣泄", score: { complex: 3, exotic: 2, premium: 2, dark: 1 } }
   ]},
   { id: 11, group: "C", groupName: "关系模式", text: "在旁人的评价中，更常出现哪句？", options: [
-    { text: "“很好相处，没什么架子”", score: { sweet: 1, refreshing: 1, simple: 1 } },
-    { text: "“温柔，但有点距离”", score: { tea: 1, cold: 1, floral: 1 } },
-    { text: "“看不透，但让人想靠近”", score: { complex: 2, alcohol: 1, dark: 1 } },
-    { text: "“特别，和别人不一样”", score: { exotic: 2, premium: 1, complex: 1 } }
+    { text: "“很好相处，没什么架子”", score: { sweet: 2, refreshing: 2, simple: 2, soft: 1 } },
+    { text: "“温柔，但有点距离”", score: { tea: 2, cold: 2, floral: 2, distance: 1 } },
+    { text: "“看不透，但让人想靠近”", score: { complex: 3, alcohol: 2, dark: 2, distance: 1 } },
+    { text: "“特别，和别人不一样”", score: { exotic: 3, premium: 2, complex: 2, mature: 1 } }
   ]},
   { id: 12, group: "C", groupName: "关系模式", text: "在与众多朋友相处时，Ta 的身份更像是?", options: [
-    { text: "气氛组，负责热场", score: { sparkling: 2, bright: 2, fruity: 1 } },
-    { text: "倾听者，谁都能与其谈话", score: { creamy: 1, tea: 1, soft: 1 } },
-    { text: "偶尔出现，但是主心骨", score: { cold: 1, complex: 1, mature: 1 } },
-    { text: "自带距离感，却让人渴望探究", score: { exotic: 1, premium: 1, dark: 1 } }
+    { text: "气氛组，负责热场", score: { sparkling: 3, bright: 2, fruity: 2, sweet: 1 } },
+    { text: "倾听者，谁都能与其谈话", score: { creamy: 2, tea: 2, soft: 2, mature: 1 } },
+    { text: "偶尔出现，但是主心骨", score: { cold: 2, complex: 2, mature: 2, distance: 1 } },
+    { text: "自带距离感，却让人渴望探究", score: { exotic: 3, premium: 2, dark: 2, distance: 1 } }
   ]},
   { id: 13, group: "C", groupName: "关系模式", text: "亲密关系像一层模糊的纸，而Ta 对亲密关系的态度更接近？", options: [
-    { text: "喜欢就要表达情感，在一起", score: { sweet: 2, bright: 1, simple: 1 } },
-    { text: "慢慢来，先从朋友开始奠定基础", score: { tea: 1, creamy: 1, soft: 1 } },
-    { text: "需要空间，不希望被一段关系束缚", score: { cold: 2, bitter: 1, distance: 1 } },
-    { text: "要么不建立，要么付出很真的真心", score: { complex: 2, alcohol: 1, dark: 1 } }
+    { text: "喜欢就要表达情感，在一起", score: { sweet: 3, bright: 2, simple: 2, hot: 1 } },
+    { text: "慢慢来，先从朋友开始奠定基础", score: { tea: 2, creamy: 2, soft: 2, mature: 1 } },
+    { text: "需要空间，不希望被一段关系束缚", score: { cold: 3, bitter: 2, distance: 2, mature: 1 } },
+    { text: "要么不建立，要么付出很真的真心", score: { complex: 3, alcohol: 2, dark: 2, premium: 1 } }
   ]},
   { id: 14, group: "C", groupName: "关系模式", text: "在日常生活当中，Ta 更容易吸引哪种人？", options: [
-    { text: "阳光、直接、话多的人", score: { bright: 2, sparkling: 1, fruity: 1 } },
-    { text: "温柔、稳定、会照顾人的人", score: { creamy: 2, tea: 1, soft: 1 } },
-    { text: "聪明、有距离、有故事的人", score: { bitter: 1, mature: 1, dark: 1 } },
-    { text: "特别、特立独行、不按常理出牌的人", score: { exotic: 2, premium: 1, complex: 1 } }
+    { text: "阳光、直接、话多的人", score: { bright: 3, sparkling: 2, fruity: 2, simple: 1 } },
+    { text: "温柔、稳定、会照顾人的人", score: { creamy: 3, tea: 2, soft: 2, mature: 1 } },
+    { text: "聪明、有距离、有故事的人", score: { bitter: 2, mature: 2, dark: 2, distance: 1 } },
+    { text: "特别、特立独行、不按常理出牌的人", score: { exotic: 3, premium: 2, complex: 2, mature: 1 } }
   ]},
   { id: 15, group: "C", groupName: "关系模式", text: "Ta 在一段情感关系里最怕什么？", options: [
-    { text: "无聊，没意思，害怕新鲜感过去", score: { sparkling: 1, bright: 1, fruity: 1 } },
-    { text: "被误解，说不清，深陷自证之中", score: { tea: 1, floral: 1, complex: 1 } },
-    { text: "被控制，失去自己，成为笼中鸟", score: { cold: 2, bitter: 1, mature: 1 } },
-    { text: "被看透，没有秘密，就好像全透明地展现自己", score: { dark: 2, complex: 1, exotic: 1 } }
+    { text: "无聊，没意思，害怕新鲜感过去", score: { sparkling: 2, bright: 2, fruity: 2, hot: 1 } },
+    { text: "被误解，说不清，深陷自证之中", score: { tea: 2, floral: 2, complex: 2, soft: 1 } },
+    { text: "被控制，失去自己，成为笼中鸟", score: { cold: 3, bitter: 2, mature: 2, distance: 1 } },
+    { text: "被看透，没有秘密，就好像全透明地展现自己", score: { dark: 3, complex: 2, exotic: 2, premium: 1 } }
   ]},
   { id: 16, group: "D", groupName: "深层选择", text: "Ta 对“命定缘分”的看法更接近于哪一条？", options: [
-    { text: "信，认为该遇到就会遇到", score: { sweet: 1, bright: 1, soft: 1 } },
-    { text: "半信，但更愿意相信日常相处", score: { tea: 1, creamy: 1, simple: 1 } },
-    { text: "不信，觉得都是个人选择", score: { cold: 2, bitter: 1, mature: 1 } },
-    { text: "信，但觉得命定往往不轻松", score: { complex: 2, dark: 1, alcohol: 1 } }
+    { text: "信，认为该遇到就会遇到", score: { sweet: 2, bright: 2, soft: 2, simple: 1 } },
+    { text: "半信，但更愿意相信日常相处", score: { tea: 2, creamy: 2, simple: 2, soft: 1 } },
+    { text: "不信，觉得都是个人选择", score: { cold: 3, bitter: 2, mature: 2, distance: 1 } },
+    { text: "信，但觉得命定往往不轻松", score: { complex: 3, dark: 2, alcohol: 2, mature: 1 } }
   ]},
   { id: 17, group: "D", groupName: "深层选择", text: "以下的选择中，Ta 更看重哪种东西？", options: [
-    { text: "当下的快乐", score: { sparkling: 1, bright: 1, sweet: 1 } },
-    { text: "长久的安心", score: { creamy: 1, tea: 1, soft: 1 } },
-    { text: "自己的原则", score: { cold: 1, bitter: 1, mature: 1 } },
-    { text: "别人给不了的独特体验", score: { exotic: 2, premium: 1, complex: 1 } }
+    { text: "当下的快乐", score: { sparkling: 2, bright: 2, sweet: 2, hot: 1 } },
+    { text: "长久的安心", score: { creamy: 2, tea: 2, soft: 2, mature: 1 } },
+    { text: "自己的原则", score: { cold: 2, bitter: 2, mature: 2, distance: 1 } },
+    { text: "别人给不了的独特体验", score: { exotic: 3, premium: 3, complex: 2, dark: 1 } }
   ]},
   { id: 18, group: "D", groupName: "深层选择", text: "独处的时候，Ta 更希望可以？", options: [
-    { text: "放松，做喜欢的事", score: { bright: 1, refreshing: 1, fruity: 1 } },
-    { text: "安静，发呆或看书", score: { tea: 1, floral: 1, soft: 1 } },
-    { text: "想很多，停不下来", score: { bitter: 2, complex: 1, dark: 1 } },
-    { text: "做点特别的事，别人不太懂", score: { exotic: 2, premium: 1, dark: 1 } }
+    { text: "放松，做喜欢的事", score: { bright: 2, refreshing: 2, fruity: 2, simple: 1 } },
+    { text: "安静，发呆或看书", score: { tea: 2, floral: 2, soft: 2, mature: 1 } },
+    { text: "想很多，停不下来", score: { bitter: 3, complex: 2, dark: 2, distance: 1 } },
+    { text: "做点特别的事，别人不太懂", score: { exotic: 3, premium: 2, dark: 2, complex: 1 } }
   ]},
   { id: 19, group: "D", groupName: "深层选择", text: "Ta 更愿意为什么放低姿态？", options: [
-    { text: "喜欢的人", score: { sweet: 2, creamy: 1, soft: 1 } },
-    { text: "值得的朋友", score: { tea: 1, creamy: 1, simple: 1 } },
-    { text: "自己的底线", score: { cold: 2, bitter: 1, mature: 1 } },
-    { text: "很少这么做", score: { alcohol: 1, dark: 1, exotic: 1 } }
+    { text: "喜欢的人", score: { sweet: 3, creamy: 2, soft: 2, hot: 1 } },
+    { text: "值得的朋友", score: { tea: 2, creamy: 2, simple: 2, soft: 1 } },
+    { text: "自己的底线", score: { cold: 3, bitter: 2, mature: 2, distance: 1 } },
+    { text: "很少这么做", score: { alcohol: 2, dark: 2, exotic: 2, premium: 1 } }
   ]},
   { id: 20, group: "D", groupName: "深层选择", text: "Ta 身上更明显的一股力量是？", options: [
-    { text: "生命力，像夏天", score: { bright: 2, sparkling: 1, fruity: 1 } },
-    { text: "包容力，像温水", score: { creamy: 2, tea: 1, soft: 1 } },
-    { text: "清醒感，像冷风", score: { cold: 2, bitter: 1, mature: 1 } },
-    { text: "故事感，像旧书", score: { complex: 2, dark: 1, spice: 1 } }
+    { text: "生命力，像夏天", score: { bright: 3, sparkling: 2, fruity: 2, hot: 1 } },
+    { text: "包容力，像温水", score: { creamy: 3, tea: 2, soft: 2, mature: 1 } },
+    { text: "清醒感，像冷风", score: { cold: 3, bitter: 2, mature: 2, distance: 1 } },
+    { text: "故事感，像旧书", score: { complex: 3, dark: 2, spice: 2, mature: 1 } }
   ]},
   { id: 21, group: "E", groupName: "夜晚", text: "Ta 更接近哪种夜晚？", options: [
-    { text: "夏夜，热闹，有气泡和音乐", score: { sparkling: 2, bright: 1, alcohol: 1 } },
-    { text: "冬夜，安静，有香料和热饮", score: { spice: 2, alcohol: 1, mature: 1 }, hidden: { wine: 1 } },
-    { text: "深夜，一个人，灯很暗", score: { dark: 2, bitter: 1, complex: 1 } },
-    { text: "陌生的夜，新鲜，不确定", score: { exotic: 2, premium: 1, complex: 1 }, hidden: { truffle: 1 } }
+    { text: "夏夜，热闹，有气泡和音乐", score: { sparkling: 3, bright: 2, alcohol: 2, fruity: 1 } },
+    { text: "冬夜，安静，有香料和热饮", score: { spice: 3, alcohol: 2, mature: 2, thick: 1 }, hidden: { wine: 1 } },
+    { text: "深夜，一个人，灯很暗", score: { dark: 3, bitter: 2, complex: 2, distance: 1 } },
+    { text: "陌生的夜，新鲜，不确定", score: { exotic: 3, premium: 2, complex: 2, mature: 1 }, hidden: { truffle: 1 } }
   ]},
   { id: 22, group: "E", groupName: "复杂度", text: "Ta 对“复杂”的态度更接近？", options: [
-    { text: "不喜欢复杂，简单最好", score: { simple: 2, refreshing: 1, bright: 1 } },
-    { text: "可以复杂，但要值得", score: { complex: 1, premium: 1, mature: 1 } },
-    { text: "喜欢复杂，有层次才有趣", score: { complex: 2, exotic: 1, premium: 1 }, hidden: { truffle: 1 } },
-    { text: "越复杂越具有吸引力", score: { complex: 2, exotic: 2, dark: 1 }, hidden: { truffle: 2, wine: 1 } }
+    { text: "不喜欢复杂，简单最好", score: { simple: 3, refreshing: 2, bright: 2, sweet: 1 } },
+    { text: "可以复杂，但要值得", score: { complex: 2, premium: 2, mature: 2, dark: 1 } },
+    { text: "喜欢复杂，有层次才有趣", score: { complex: 3, exotic: 2, premium: 2, dark: 1 }, hidden: { truffle: 1 } },
+    { text: "越复杂越具有吸引力", score: { complex: 3, exotic: 3, dark: 2, premium: 1 }, hidden: { truffle: 2, wine: 1 } }
   ]},
   { id: 23, group: "F", groupName: "材质", text: "选一种比喻的话，Ta 更像哪种材质？", options: [
-    { text: "玻璃，透明，干净", score: { refreshing: 2, bright: 1, simple: 1 } },
-    { text: "棉布，软，暖", score: { creamy: 2, hot: 1, soft: 1 } },
-    { text: "金属，冷，硬", score: { cold: 2, bitter: 1, mature: 1 } },
-    { text: "旧木头，有纹路，有味道", score: { complex: 2, spice: 1, dark: 1 } }
+    { text: "玻璃，透明，干净", score: { refreshing: 3, bright: 2, simple: 2, soft: 1 } },
+    { text: "棉布，软，暖", score: { creamy: 2, hot: 2, soft: 2, thick: 1 } },
+    { text: "金属，冷，硬", score: { cold: 3, bitter: 2, mature: 2, distance: 1 } },
+    { text: "旧木头，有纹路，有味道", score: { complex: 3, spice: 2, dark: 2, mature: 1 } }
   ]},
   { id: 24, group: "F", groupName: "季节", text: "Ta 如果是一个季节，更像？", options: [
-    { text: "夏天", score: { hot: 2, bright: 2, fruity: 1 } },
-    { text: "春天", score: { floral: 2, refreshing: 1, soft: 1 } },
-    { text: "秋天", score: { tea: 1, mature: 1, spice: 1 } },
-    { text: "冬天", score: { dark: 1, thick: 1, alcohol: 1 } }
+    { text: "夏天", score: { hot: 3, bright: 3, fruity: 2, sparkling: 1 } },
+    { text: "春天", score: { floral: 3, refreshing: 2, soft: 2, tea: 1 } },
+    { text: "秋天", score: { tea: 2, mature: 2, spice: 2, bitter: 1 } },
+    { text: "冬天", score: { dark: 2, thick: 2, alcohol: 2, cold: 1 } }
   ]}
 ];
 
@@ -1510,11 +1484,12 @@ function matchAllNormal(userVec) {
   return ranked;
 }
 
-/* ---------- 方案 B：前 8 名加权随机 ---------- */
+/* ---------- 普通款加权随机：前 8 名 ---------- */
+/* 权重：26 / 18 / 14 / 11 / 9 / 8 / 7 / 7 */
 function pickByWeightedTop(ranked) {
   const top = ranked.slice(0, 8);
   if (top.length === 0) return ranked[0].drink;
-  const weights = [30, 15, 15, 8, 8, 8, 8, 8];
+  const weights = [26, 18, 14, 11, 9, 8, 7, 7];
   let total = 0;
   for (let i = 0; i < top.length; i++) total += weights[i];
   let r = Math.random() * total;
@@ -1573,9 +1548,8 @@ function generateResult() {
     resultDrink = pickByWeightedTop(ranked);
     isHidden = false;
     const similar = getSimilarDrinks(ranked, resultDrink, false);
-    const matchScore = displayMatchScore(
-      ranked.find(r => r.drink.id === resultDrink.id)?.sim || ranked[0].sim
-    );
+    const matchedEntry = ranked.find(r => r.drink.id === resultDrink.id);
+    const matchScore = displayMatchScore(matchedEntry ? matchedEntry.sim : ranked[0].sim);
     return { drink: resultDrink, isHidden: false, matchScore, similar };
   }
 
@@ -1632,18 +1606,15 @@ function applyResultTheme(drink, isHidden) {
   const main = drink.mainColor;
   const sub = drink.subColor;
 
-  // 背景：主色 + 辅色双色渐变（深色款自动加深）
   const mainDark = mixColor(main, "#000000", 0.35);
   const subDark = mixColor(sub, "#000000", 0.25);
   const bgA = mainDark;
   const bgB = subDark;
 
-  // 文字：根据背景亮度自动黑 / 白
   const bgMid = mixColor(bgA, bgB, 0.5);
   const text = readableText(bgMid);
   const textSoft = text === "#ffffff" ? "rgba(255,255,255,0.82)" : "rgba(0,0,0,0.72)";
 
-  // 卡片：深 / 浅对比
   const card = text === "#ffffff" ? rgba("#ffffff", 0.10) : rgba("#ffffff", 0.55);
   const border = text === "#ffffff" ? rgba("#ffffff", 0.30) : rgba("#000000", 0.18);
   const shadow = text === "#ffffff" ? "rgba(0,0,0,0.35)" : "rgba(0,0,0,0.12)";
@@ -1659,18 +1630,15 @@ function applyResultTheme(drink, isHidden) {
   pageResult.style.setProperty("--btn-border", border);
   pageResult.style.setProperty("--shadow", shadow);
 
-  // 风格 class
   pageResult.classList.remove("style-cute", "style-mature");
   pageResult.classList.add(drink.style === "mature" ? "style-mature" : "style-cute");
 
-  // 结果页网格颜色
   const grid = pageResult.querySelector(".result-grid");
   if (grid) {
     const gridColor = text === "#ffffff" ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.10)";
     grid.style.backgroundImage = `linear-gradient(${gridColor} 1px, transparent 1px), linear-gradient(90deg, ${gridColor} 1px, transparent 1px)`;
   }
 
-  // 可爱风装饰
   const cuteDeco = document.getElementById("cuteDeco");
   cuteDeco.innerHTML = "";
   if (drink.style !== "mature") {
@@ -1686,7 +1654,6 @@ function applyResultTheme(drink, isHidden) {
     }
   }
 
-  // 成熟风装饰
   const matureDeco = document.getElementById("matureDeco");
   matureDeco.innerHTML = "";
   if (drink.style === "mature") {
@@ -1701,7 +1668,6 @@ function applyResultTheme(drink, isHidden) {
     }
   }
 
-  // 隐藏款模式
   pageResult.classList.toggle("hidden-mode", !!isHidden);
 }
 
@@ -1872,222 +1838,6 @@ function renderRareParticles(isHidden) {
 }
 
 /* ============================================================
-   导出图片（原生 Canvas）
-   ============================================================ */
-
-function exportResultImage() {
-  if (!currentResult) return;
-  const { drink, isHidden, matchScore, rarePercent } = currentResult;
-  const text = drinkTexts[drink.id];
-  const displayName = ocName ? ocName : "你的 OC";
-
-  const W = 750, H = 1000;
-  const canvas = document.createElement("canvas");
-  canvas.width = W; canvas.height = H;
-  const ctx = canvas.getContext("2d");
-
-  // 背景渐变
-  const mainDark = mixColor(drink.mainColor, "#000000", 0.35);
-  const subDark = mixColor(drink.subColor, "#000000", 0.25);
-  const grad = ctx.createLinearGradient(0, 0, W, H);
-  grad.addColorStop(0, mainDark);
-  grad.addColorStop(1, subDark);
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, W, H);
-
-  // 背景网格
-  const bgMid = mixColor(mainDark, subDark, 0.5);
-  const isDarkBg = luminance(bgMid) < 0.55;
-  const gridColor = isDarkBg ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)";
-  ctx.strokeStyle = gridColor;
-  ctx.lineWidth = 1;
-  for (let x = 0; x < W; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
-  for (let y = 0; y < H; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
-
-  const textColor = isDarkBg ? "#ffffff" : "#111111";
-  const softColor = isDarkBg ? "rgba(255,255,255,0.78)" : "rgba(0,0,0,0.68)";
-
-  // 隐藏款标识
-  let cursorY = 70;
-  if (isHidden) {
-    ctx.fillStyle = isDarkBg ? "rgba(255,255,255,0.16)" : "rgba(0,0,0,0.10)";
-    ctx.strokeStyle = textColor;
-    ctx.lineWidth = 3;
-    roundRect(ctx, W / 2 - 80, cursorY, 160, 44, 8);
-    ctx.fill(); ctx.stroke();
-    ctx.fillStyle = textColor;
-    ctx.font = "bold 22px sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("隐藏款", W / 2, cursorY + 24);
-    cursorY += 70;
-  }
-
-  // OC 名
-  ctx.fillStyle = textColor;
-  ctx.font = "bold 40px sans-serif";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  ctx.fillText(displayName, W / 2, cursorY);
-  cursorY += 60;
-
-  // 印象饮品——饮品名
-  ctx.font = "bold 34px sans-serif";
-  ctx.fillStyle = textColor;
-  ctx.fillText(`印象饮品——${drink.name}`, W / 2, cursorY);
-  cursorY += 70;
-
-  // 像素杯子（Canvas 简化重绘）
-  const cupSize = W * 0.30;
-  drawCupOnCanvas(ctx, drink, W / 2 - cupSize / 2, cursorY, cupSize);
-  cursorY += cupSize + 30;
-
-  // 匹配度 / 稀有度
-  ctx.font = "22px sans-serif";
-  ctx.fillStyle = softColor;
-  if (isHidden) {
-    ctx.fillText(`稀有度 ${rarePercent}`, W / 2, cursorY);
-  } else {
-    ctx.fillText(`匹配度 ${matchScore}%`, W / 2, cursorY);
-  }
-  cursorY += 50;
-
-  // 短标签
-  ctx.font = "bold 24px sans-serif";
-  ctx.fillStyle = textColor;
-  ctx.fillText(text.tagLabel, W / 2, cursorY);
-  cursorY += 40;
-
-  // 短句（自动换行）
-  ctx.font = "22px sans-serif";
-  ctx.fillStyle = softColor;
-  cursorY = drawWrappedText(ctx, text.tagSentence, W / 2, cursorY, W - 120, 36);
-  cursorY += 24;
-
-  // 关键词 3 个横排
-  const kw = text.keywords;
-  ctx.font = "bold 22px sans-serif";
-  const chipPadX = 22, chipH = 44, gap = 16;
-  const widths = kw.map(k => ctx.measureText(k).width + chipPadX * 2);
-  const totalW = widths.reduce((a, b) => a + b, 0) + gap * (kw.length - 1);
-  let chipX = W / 2 - totalW / 2;
-  kw.forEach((k, i) => {
-    ctx.fillStyle = isDarkBg ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.6)";
-    ctx.strokeStyle = isDarkBg ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.18)";
-    ctx.lineWidth = 2;
-    roundRect(ctx, chipX, cursorY, widths[i], chipH, 22);
-    ctx.fill(); ctx.stroke();
-    ctx.fillStyle = textColor;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(k, chipX + widths[i] / 2, cursorY + chipH / 2);
-    chipX += widths[i] + gap;
-  });
-  cursorY += chipH + 60;
-
-  // 底部
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  ctx.font = "bold 24px sans-serif";
-  ctx.fillStyle = textColor;
-  ctx.fillText("OC 印象饮品测试", W / 2, H - 110);
-  ctx.font = "20px sans-serif";
-  ctx.fillStyle = softColor;
-  ctx.fillText("一粒沙尘 制作", W / 2, H - 70);
-
-  // 导出
-  const dataUrl = canvas.toDataURL("image/png");
-  const filename = `${displayName}-${drink.name}-印象饮品.png`;
-
-  try {
-    const a = document.createElement("a");
-    a.href = dataUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  } catch (e) {
-    const w = window.open("");
-    if (w) {
-      w.document.write(`<p style="text-align:center;font-family:sans-serif;">长按图片保存</p><img src="${dataUrl}" style="width:100%;max-width:600px;display:block;margin:0 auto;">`);
-    } else {
-      alert("长按图片保存");
-    }
-  }
-}
-
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
-}
-
-function drawWrappedText(ctx, text, centerX, startY, maxWidth, lineHeight) {
-  const chars = text.split("");
-  let line = "";
-  let y = startY;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  for (let i = 0; i < chars.length; i++) {
-    const test = line + chars[i];
-    if (ctx.measureText(test).width > maxWidth && line !== "") {
-      ctx.fillText(line, centerX, y);
-      y += lineHeight;
-      line = chars[i];
-    } else {
-      line = test;
-    }
-  }
-  if (line) { ctx.fillText(line, centerX, y); y += lineHeight; }
-  return y;
-}
-
-/* ---------- Canvas 简化像素杯子 ---------- */
-function drawCupOnCanvas(ctx, drink, x, y, size) {
-  const main = drink.mainColor;
-  const sub = drink.subColor;
-  const cup = drink.cup;
-  const layers = drink.layers || 1;
-
-  let cupW, cupH;
-  if (cup === "mug") { cupW = size * 0.75; cupH = size * 0.70; }
-  else if (cup === "short") { cupW = size * 0.70; cupH = size * 0.50; }
-  else if (cup === "cup") { cupW = size * 0.68; cupH = size * 0.58; }
-  else { cupW = size * 0.65; cupH = size * 0.88; }
-
-  const cupX = x + (size - cupW) / 2;
-  const cupY = y + (size - cupH) / 2;
-  const liquidPad = size * 0.03;
-
-  // 液体
-  const liquidX = cupX + liquidPad;
-  const liquidY = cupY + liquidPad;
-  const liquidW = cupW - liquidPad * 2;
-  const liquidH = cupH - liquidPad * 2;
-
-  if (layers >= 2) {
-    const partH = liquidH / 2;
-    ctx.fillStyle = sub; ctx.globalAlpha = 0.9;
-    ctx.fillRect(liquidX, liquidY, liquidW, partH);
-    ctx.fillStyle = main; ctx.globalAlpha = 0.9;
-    ctx.fillRect(liquidX, liquidY + partH, liquidW, partH);
-  } else {
-    ctx.fillStyle = main; ctx.globalAlpha = 0.9;
-    ctx.fillRect(liquidX, liquidY, liquidW, liquidH);
-  }
-  ctx.globalAlpha = 1;
-
-  // 杯壁
-  ctx.strokeStyle = main;
-  ctx.lineWidth = 4;
-  ctx.strokeRect(cupX, cupY, cupW, cupH);
-}
-
-/* ============================================================
    答题页渲染
    ============================================================ */
 
@@ -2213,7 +1963,6 @@ document.getElementById("startBtn").addEventListener("click", startQuiz);
 document.getElementById("restartBtn").addEventListener("click", restart);
 document.getElementById("prevBtn").addEventListener("click", goPrev);
 document.getElementById("nextBtn").addEventListener("click", goNext);
-document.getElementById("exportBtn").addEventListener("click", exportResultImage);
 
 document.getElementById("ocNameInput").addEventListener("keydown", function(e) {
   if (e.key === "Enter") startQuiz();
