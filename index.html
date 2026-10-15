@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>OC 印象饮品测试</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { width: 100%; min-height: 100%; background: #111; color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; font-size: 16px; line-height: 1.7; overflow-x: hidden; }
+body { padding-bottom: 60px; }
+.pixel-grid { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.08; background-image: linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px); background-size: 24px 24px; }
+.page { position: relative; z-index: 1; width: 100%; max-width: 520px; margin: 0 auto; padding: 32px 20px 80px; display: none; }
+.page.active { display: block; animation: fadeIn 0.5s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.watermark { position: fixed; left: 0; right: 0; bottom: 12px; text-align: center; font-size: 11px; letter-spacing: 1px; color: rgba(255,255,255,0.28); pointer-events: none; z-index: 999; }
+#pageHome { text-align: center; padding-top: 15vh; }
+.home-title { font-size: 26px; font-weight: 700; letter-spacing: 2px; margin-bottom: 24px; color: #fff; text-shadow: 0 0 18px rgba(255,255,255,0.18); }
+.home-intro { font-size: 14px; line-height: 2; color: rgba(255,255,255,0.78); text-align: left; margin-bottom: 36px; padding: 0 4px; }
+.home-input { width: 100%; padding: 14px 16px; font-size: 15px; color: #fff; background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.22); outline: none; margin-bottom: 22px; font-family: inherit; transition: border-color 0.25s ease, background 0.25s ease; }
+.home-input::placeholder { color: rgba(255,255,255,0.35); }
+.home-input:focus { border-color: rgba(255,255,255,0.55); background: rgba(255,255,255,0.1); }
+.home-btn { display: inline-block; width: 100%; padding: 16px 20px; font-size: 16px; font-weight: 600; letter-spacing: 2px; color: #111; background: #f5f5f5; border: none; cursor: pointer; font-family: inherit; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.home-btn:active { transform: scale(0.97); }
+.home-deco { margin-top: 40px; display: flex; justify-content: center; gap: 18px; opacity: 0.5; }
+.home-deco svg { width: 36px; height: 36px; }
+#pageQuiz { padding-top: 24px; }
+.quiz-top { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 14px; }
+.quiz-progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.12); margin-bottom: 34px; overflow: hidden; }
+.quiz-progress-fill { height: 100%; width: 0%; background: rgba(255,255,255,0.85); transition: width 0.35s ease; }
+.quiz-question { font-size: 18px; font-weight: 600; line-height: 1.8; text-align: left; margin-bottom: 30px; color: #fff; min-height: 64px; }
+.quiz-options { display: flex; flex-direction: column; gap: 14px; }
+.option-btn { display: flex; align-items: flex-start; gap: 12px; width: 100%; padding: 14px 16px; text-align: left; font-size: 15px; line-height: 1.7; color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.18); cursor: pointer; font-family: inherit; transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease; }
+.option-btn:active { transform: scale(0.985); }
+.option-btn.selected { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.85); box-shadow: 0 0 0 1px rgba(255,255,255,0.35), 0 0 18px rgba(255,255,255,0.15); }
+.option-index { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; margin-top: 2px; font-size: 12px; font-weight: 700; color: #111; background: rgba(255,255,255,0.85); border: 2px solid rgba(255,255,255,0.9); box-shadow: 2px 2px 0 rgba(0,0,0,0.25); }
+.option-text { flex: 1; }
+.quiz-nav { display: flex; justify-content: space-between; gap: 14px; margin-top: 30px; }
+.quiz-nav button { flex: 1; padding: 12px 16px; font-size: 14px; color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.22); cursor: pointer; font-family: inherit; transition: background 0.2s ease, border-color 0.2s ease; }
+.quiz-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+.quiz-nav button:not(:disabled):active { background: rgba(255,255,255,0.16); }
+#pageResult { padding-top: 30px; }
+.result-rare-tag { display: inline-block; padding: 4px 12px; font-size: 12px; letter-spacing: 2px; color: #fff; background: rgba(255,255,255,0.14); border: 2px solid rgba(255,255,255,0.6); box-shadow: 2px 2px 0 rgba(0,0,0,0.25); margin-bottom: 16px; animation: rareGlow 2.2s ease-in-out infinite; }
+@keyframes rareGlow { 0%, 100% { box-shadow: 2px 2px 0 rgba(0,0,0,0.25), 0 0 10px rgba(255,255,255,0.2); } 50% { box-shadow: 2px 2px 0 rgba(0,0,0,0.25), 0 0 22px rgba(255,255,255,0.55); } }
+.result-title { font-size: 20px; font-weight: 700; line-height: 1.6; text-align: center; margin-bottom: 20px; color: #fff; }
+.result-pixel-wrap { display: flex; justify-content: center; margin-bottom: 18px; }
+.result-pixel-wrap svg { width: 120px; height: 120px; }
+.result-score { text-align: center; font-size: 13px; letter-spacing: 1px; color: rgba(255,255,255,0.72); margin-bottom: 22px; }
+.result-tagline { text-align: center; margin-bottom: 20px; }
+.result-tagline .tag-label { display: inline-block; padding: 3px 10px; font-size: 12px; letter-spacing: 2px; color: #fff; border: 2px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.08); margin-bottom: 10px; }
+.result-tagline .tag-sentence { font-size: 15px; line-height: 1.9; color: rgba(255,255,255,0.9); }
+.result-keywords { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+.keyword-chip { padding: 5px 14px; font-size: 13px; letter-spacing: 1px; color: #fff; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.4); box-shadow: 2px 2px 0 rgba(0,0,0,0.18); }
+.result-card { width: 90%; margin: 0 auto 20px; padding: 20px 18px; background: rgba(255,255,255,0.09); border: 2px solid rgba(255,255,255,0.22); box-shadow: 3px 3px 0 rgba(0,0,0,0.22); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); clip-path: polygon(0 8px, 8px 8px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px)); transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.result-card:active { transform: translateY(-2px); box-shadow: 3px 6px 0 rgba(0,0,0,0.28); }
+.card-title { font-size: 15px; font-weight: 700; letter-spacing: 2px; margin-bottom: 14px; color: #fff; text-align: left; }
+.card-text { font-size: 14.5px; line-height: 1.95; color: rgba(255,255,255,0.86); text-align: left; }
+.card-text p { margin-bottom: 12px; }
+.card-text p:last-child { margin-bottom: 0; }
+.relation-block { margin-bottom: 16px; }
+.relation-block:last-child { margin-bottom: 0; }
+.relation-label { display: block; font-size: 13px; font-weight: 700; letter-spacing: 1px; color: rgba(255,255,255,0.95); margin-bottom: 6px; }
+.recipe-ingredients, .recipe-steps { margin: 0; padding: 0; list-style: none; }
+.recipe-ingredients li, .recipe-steps li { font-size: 14px; line-height: 1.85; color: rgba(255,255,255,0.85); padding-left: 18px; position: relative; margin-bottom: 6px; }
+.recipe-ingredients li::before { content: "■"; position: absolute; left: 0; top: 0; font-size: 8px; line-height: 1.85; color: rgba(255,255,255,0.5); }
+.recipe-steps li::before { content: attr(data-step); position: absolute; left: 0; top: 0; font-size: 12px; line-height: 1.85; color: rgba(255,255,255,0.5); }
+.recipe-sub-title { font-size: 13px; font-weight: 700; letter-spacing: 1px; color: rgba(255,255,255,0.9); margin: 14px 0 8px; }
+.recipe-sub-title:first-child { margin-top: 0; }
+.result-similar-title { text-align: center; font-size: 14px; letter-spacing: 2px; color: rgba(255,255,255,0.7); margin: 34px 0 16px; }
+.similar-scroll { width: 100%; overflow-x: auto; overflow-y: hidden; white-space: nowrap; padding-bottom: 10px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.similar-scroll::-webkit-scrollbar { display: none; }
+.similar-track { display: inline-flex; gap: 16px; padding: 0 4px; animation: similarScroll 28s linear infinite; }
+@keyframes similarScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.similar-item { flex: 0 0 auto; width: 84px; text-align: center; }
+.similar-item svg { width: 64px; height: 64px; display: block; margin: 0 auto 6px; }
+.similar-name { font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.78); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 84px; }
+.result-restart { display: block; width: 90%; margin: 36px auto 20px; padding: 15px 20px; font-size: 15px; letter-spacing: 2px; color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.3); cursor: pointer; font-family: inherit; transition: background 0.2s ease, border-color 0.2s ease; }
+.result-restart:active { background: rgba(255,255,255,0.16); }
+.rare-particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; display: none; }
+.rare-particles.active { display: block; }
+.rare-particle { position: absolute; width: 3px; height: 3px; background: #fff; opacity: 0.7; animation: particleFloat linear infinite; }
+@keyframes particleFloat { 0% { transform: translateY(0) scale(1); opacity: 0.8; } 50% { opacity: 0.35; } 100% { transform: translateY(-120px) scale(0.4); opacity: 0; } }
+@media (max-width: 380px) { .home-title { font-size: 22px; } .quiz-question { font-size: 16px; } .option-btn { font-size: 14px; } .result-title { font-size: 18px; } }
+@media (min-width: 768px) { .page { max-width: 560px; padding-top: 50px; } .home-title { font-size: 30px; } .quiz-question { font-size: 20px; } }
+</style>
+</head>
+<body>
+
+<div class="pixel-grid"></div>
+<div class="rare-particles" id="rareParticles"></div>
+
+<div class="page active" id="pageHome">
+  <h1 class="home-title">OC 印象饮品测试</h1>
+  <p class="home-intro">每一个角色，都拥有一个属于自己的味道……有的是夏天，有的是冬天，有甜有涩，有酸有苦，所以，Ta 会是你想象中的那个口味吗？</p>
+  <input type="text" class="home-input" id="ocNameInput" placeholder="在此写下，Ta 的名字" maxlength="20" autocomplete="off">
+  <button class="home-btn" id="startBtn">开始调制</button>
+  <div class="home-deco">
+    <svg viewBox="0 0 16 16" shape-rendering="crispEdges"><rect x="4" y="2" width="8" height="2" fill="#f5f5f5"/><rect x="3" y="4" width="10" height="8" fill="none" stroke="#f5f5f5" stroke-width="1"/><rect x="4" y="6" width="8" height="6" fill="#f5f5f5" opacity="0.35"/><rect x="6" y="0" width="1" height="3" fill="#f5f5f5"/></svg>
+    <svg viewBox="0 0 16 16" shape-rendering="crispEdges"><rect x="4" y="3" width="8" height="10" fill="none" stroke="#f5f5f5" stroke-width="1"/><rect x="5" y="5" width="6" height="7" fill="#f5f5f5" opacity="0.3"/><rect x="7" y="1" width="1" height="3" fill="#f5f5f5"/><rect x="8" y="1" width="3" height="1" fill="#f5f5f5"/></svg>
+    <svg viewBox="0 0 16 16" shape-rendering="crispEdges"><rect x="3" y="4" width="10" height="8" fill="none" stroke="#f5f5f5" stroke-width="1"/><rect x="4" y="6" width="8" height="5" fill="#f5f5f5" opacity="0.28"/><rect x="6" y="1" width="1" height="4" fill="#f5f5f5"/></svg>
+  </div>
+</div>
+
+<div class="page" id="pageQuiz">
+  <div class="quiz-top"><span id="quizCounter">第 1 / 24 题</span><span id="quizGroupName"></span></div>
+  <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quizProgressFill"></div></div>
+  <div class="quiz-question" id="quizQuestion"></div>
+  <div class="quiz-options" id="quizOptions"></div>
+  <div class="quiz-nav"><button id="prevBtn" disabled>上一题</button><button id="nextBtn" disabled>下一题</button></div>
+</div>
+
+<div class="page" id="pageResult">
+  <div id="resultRareTagWrap"></div>
+  <h2 class="result-title" id="resultTitle"></h2>
+  <div class="result-pixel-wrap" id="resultPixelWrap"></div>
+  <div class="result-score" id="resultScore"></div>
+  <div class="result-tagline" id="resultTagline"></div>
+  <div class="result-keywords" id="resultKeywords"></div>
+  <div class="result-card" id="cardAnalysis"><div class="card-title">心理分析</div><div class="card-text" id="analysisText"></div></div>
+  <div class="result-card" id="cardRelation"><div class="card-title">关系模式</div><div class="card-text" id="relationText"></div></div>
+  <div class="result-card" id="cardRecipe"><div class="card-title">配方卡</div><div class="card-text" id="recipeText"></div></div>
+  <div class="result-similar-title">或许你还会是……</div>
+  <div class="similar-scroll" id="similarScroll"><div class="similar-track" id="similarTrack"></div></div>
+  <button class="result-restart" id="restartBtn">重新调制</button>
+</div>
+
+<div class="watermark">一粒沙尘 制作</div>
+
+<script>
+const questions = [
+  { id: 1, group: "A", groupName: "外在气质", text: "Ta 给人的第一眼，更像哪种颜色氛围？", options: [
+    { text: "明亮、干净、偏浅色", score: { bright: 2, refreshing: 1, sweet: 1 } },
+    { text: "浓郁、饱和、偏暖色", score: { thick: 2, sweet: 1, hot: 1 } },
+    { text: "冷调、低饱和、偏灰蓝", score: { cold: 2, dark: 1, bitter: 1 } },
+    { text: "撞色、跳脱、不好归类", score: { complex: 2, bright: 1, exotic: 1 } }
+  ]},
+  { id: 2, group: "A", groupName: "外在气质", text: "Ta 身上更常出现哪种质感？", options: [
+    { text: "气泡感，轻，跳", score: { sparkling: 2, refreshing: 2, cold: 1 } },
+    { text: "奶感，软，厚", score: { creamy: 2, sweet: 1, thick: 1 } },
+    { text: "茶感，干净，有回甘", score: { tea: 2, refreshing: 1, floral: 1 } },
+    { text: "烟熏感，木质，暗", score: { bitter: 2, dark: 2, spice: 1 } }
+  ]},
+  { id: 3, group: "A", groupName: "外在气质", text: "Ta 更接近哪种天气？", options: [
+    { text: "夏天午后，太阳很大", score: { hot: 2, bright: 2, fruity: 1 } },
+    { text: "冬夜，外面很冷，屋里很暖", score: { hot: 1, thick: 2, mature: 1 } },
+    { text: "雨后，空气很干净", score: { cold: 1, refreshing: 2, floral: 1 } },
+    { text: "起雾的清晨，看不远", score: { dark: 2, complex: 1, bitter: 1 } }
+  ]},
+  { id: 4, group: "A", groupName: "外在气质", text: "Ta 如果是一段声音，更像？", options: [
+    { text: "气泡水开盖那一下", score: { sparkling: 2, refreshing: 2, bright: 1 } },
+    { text: "咖啡机低沉的研磨声", score: { coffee: 2, bitter: 1, mature: 1 } },
+    { text: "雨落在叶子上的声音", score: { floral: 1, refreshing: 1, soft: 1 } },
+    { text: "老式唱片跳针的杂音", score: { complex: 2, dark: 1, exotic: 1 } }
+  ]},
+  { id: 5, group: "B", groupName: "性格内核", text: "Ta 生气的时候，更接近？", options: [
+    { text: "当场说清楚，不隔夜", score: { bright: 1, sour: 1, refreshing: 1 } },
+    { text: "不说话，自己消化", score: { bitter: 1, dark: 1, complex: 1 } },
+    { text: "冷处理，等对方先开口", score: { cold: 2, bitter: 1, distance: 1 } },
+    { text: "笑着翻篇，但记很久", score: { complex: 2, sweet: 1, dark: 1 } }
+  ]},
+  { id: 6, group: "B", groupName: "性格内核", text: "Ta 更容易被哪种东西打动？", options: [
+    { text: "直接、热烈的喜欢", score: { sweet: 2, hot: 1, bright: 1 } },
+    { text: "长期、安静的陪伴", score: { creamy: 1, tea: 1, soft: 1 } },
+    { text: "懂 Ta 没说出口的部分", score: { complex: 2, bitter: 1, dark: 1 } },
+    { text: "稀有、特别、别人给不了的东西", score: { exotic: 2, premium: 1, complex: 1 } }
+  ]},
+  { id: 7, group: "B", groupName: "性格内核", text: "Ta 的情绪更像哪种杯子？", options: [
+    { text: "透明杯，一眼看到底", score: { refreshing: 2, bright: 1, simple: 1 } },
+    { text: "马克杯，握着很暖", score: { creamy: 1, hot: 1, soft: 1 } },
+    { text: "高脚杯，好看但有距离", score: { alcohol: 1, premium: 1, cold: 1 } },
+    { text: "特调杯，分层多，看不透", score: { complex: 2, dark: 1, exotic: 1 } }
+  ]},
+  { id: 8, group: "B", groupName: "性格内核", text: "Ta 对“甜”的态度更接近？", options: [
+    { text: "喜欢甜，不掩饰", score: { sweet: 2, bright: 1, fruity: 1 } },
+    { text: "可以甜，但要有酸", score: { sweet: 1, sour: 1, fruity: 1 } },
+    { text: "更喜欢苦后回甘", score: { bitter: 2, tea: 1, mature: 1 } },
+    { text: "甜不甜无所谓，要有层次", score: { complex: 2, premium: 1, exotic: 1 } }
+  ]},
+  { id: 9, group: "B", groupName: "性格内核", text: "Ta 的边界感更像？", options: [
+    { text: "没什么边界，谁都能靠近", score: { refreshing: 1, sweet: 1, simple: 1 } },
+    { text: "表面好相处，心里有数", score: { tea: 1, complex: 1, mature: 1 } },
+    { text: "边界很清楚，不熟别越线", score: { cold: 2, bitter: 1, distance: 1 } },
+    { text: "看人，对的人没有边界", score: { complex: 2, alcohol: 1, dark: 1 } }
+  ]},
+  { id: 10, group: "B", groupName: "性格内核", text: "Ta 更习惯怎么处理心事？", options: [
+    { text: "说出来，不憋着", score: { bright: 1, refreshing: 1, simple: 1 } },
+    { text: "找信任的人慢慢讲", score: { creamy: 1, tea: 1, soft: 1 } },
+    { text: "自己扛，扛不住再说", score: { bitter: 2, mature: 1, dark: 1 } },
+    { text: "写成东西，或者做成别的事", score: { complex: 2, exotic: 1, premium: 1 } }
+  ]},
+  { id: 11, group: "C", groupName: "关系模式", text: "旁人评价 Ta，更常出现哪句？", options: [
+    { text: "“很好相处，没什么架子”", score: { sweet: 1, refreshing: 1, simple: 1 } },
+    { text: "“温柔，但有点距离”", score: { tea: 1, cold: 1, floral: 1 } },
+    { text: "“看不透，但让人想靠近”", score: { complex: 2, alcohol: 1, dark: 1 } },
+    { text: "“特别，和别人不一样”", score: { exotic: 2, premium: 1, complex: 1 } }
+  ]},
+  { id: 12, group: "C", groupName: "关系模式", text: "Ta 在朋友里更像？", options: [
+    { text: "气氛组，负责热场", score: { sparkling: 2, bright: 2, fruity: 1 } },
+    { text: "倾听者，谁都能找 Ta", score: { creamy: 1, tea: 1, soft: 1 } },
+    { text: "偶尔出现，但很重要", score: { cold: 1, complex: 1, mature: 1 } },
+    { text: "自带距离感，却让人好奇", score: { exotic: 1, premium: 1, dark: 1 } }
+  ]},
+  { id: 13, group: "C", groupName: "关系模式", text: "Ta 对亲密关系的态度更接近？", options: [
+    { text: "喜欢就在一起，简单点", score: { sweet: 2, bright: 1, simple: 1 } },
+    { text: "慢慢来，先做朋友", score: { tea: 1, creamy: 1, soft: 1 } },
+    { text: "需要空间，不喜欢被绑住", score: { cold: 2, bitter: 1, distance: 1 } },
+    { text: "要么不要，要么很深", score: { complex: 2, alcohol: 1, dark: 1 } }
+  ]},
+  { id: 14, group: "C", groupName: "关系模式", text: "Ta 更容易吸引哪种人？", options: [
+    { text: "阳光、直接、话多的人", score: { bright: 2, sparkling: 1, fruity: 1 } },
+    { text: "温柔、稳定、会照顾人的人", score: { creamy: 2, tea: 1, soft: 1 } },
+    { text: "聪明、有距离、有故事的人", score: { bitter: 1, mature: 1, dark: 1 } },
+    { text: "特别、猎奇、不按常理出牌的人", score: { exotic: 2, premium: 1, complex: 1 } }
+  ]},
+  { id: 15, group: "C", groupName: "关系模式", text: "Ta 在关系里最怕什么？", options: [
+    { text: "无聊，没意思", score: { sparkling: 1, bright: 1, fruity: 1 } },
+    { text: "被误解，说不清", score: { tea: 1, floral: 1, complex: 1 } },
+    { text: "被控制，失去自己", score: { cold: 2, bitter: 1, mature: 1 } },
+    { text: "被看透，没有秘密", score: { dark: 2, complex: 1, exotic: 1 } }
+  ]},
+  { id: 16, group: "D", groupName: "深层选择", text: "Ta 对“命中注定”的看法更接近？", options: [
+    { text: "信，觉得该遇到就会遇到", score: { sweet: 1, bright: 1, soft: 1 } },
+    { text: "半信，但更信相处", score: { tea: 1, creamy: 1, simple: 1 } },
+    { text: "不信，觉得都是选择", score: { cold: 2, bitter: 1, mature: 1 } },
+    { text: "信，但觉得命中注定往往不轻松", score: { complex: 2, dark: 1, alcohol: 1 } }
+  ]},
+  { id: 17, group: "D", groupName: "深层选择", text: "Ta 更看重哪种东西？", options: [
+    { text: "当下的快乐", score: { sparkling: 1, bright: 1, sweet: 1 } },
+    { text: "长久的安心", score: { creamy: 1, tea: 1, soft: 1 } },
+    { text: "自己的原则", score: { cold: 1, bitter: 1, mature: 1 } },
+    { text: "别人给不了的体验", score: { exotic: 2, premium: 1, complex: 1 } }
+  ]},
+  { id: 18, group: "D", groupName: "深层选择", text: "Ta 独处的时候更像？", options: [
+    { text: "放松，做喜欢的事", score: { bright: 1, refreshing: 1, fruity: 1 } },
+    { text: "安静，发呆或看书", score: { tea: 1, floral: 1, soft: 1 } },
+    { text: "想很多，停不下来", score: { bitter: 2, complex: 1, dark: 1 } },
+    { text: "做点特别的事，别人不太懂", score: { exotic: 2, premium: 1, dark: 1 } }
+  ]},
+  { id: 19, group: "D", groupName: "深层选择", text: "Ta 更愿意为什么低头？", options: [
+    { text: "喜欢的人", score: { sweet: 2, creamy: 1, soft: 1 } },
+    { text: "值得的朋友", score: { tea: 1, creamy: 1, simple: 1 } },
+    { text: "自己的底线", score: { cold: 2, bitter: 1, mature: 1 } },
+    { text: "很少低头", score: { alcohol: 1, dark: 1, exotic: 1 } }
+  ]},
+  { id: 20, group: "D", groupName: "深层选择", text: "Ta 身上更明显的是？", options: [
+    { text: "生命力，像夏天", score: { bright: 2, sparkling: 1, fruity: 1 } },
+    { text: "包容力，像温水", score: { creamy: 2, tea: 1, soft: 1 } },
+    { text: "清醒感，像冷风", score: { cold: 2, bitter: 1, mature: 1 } },
+    { text: "故事感，像旧书", score: { complex: 2, dark: 1, spice: 1 } }
+  ]},
+  { id: 21, group: "E", groupName: "夜晚", text: "Ta 更接近哪种夜晚？", options: [
+    { text: "夏夜，热闹，有气泡和音乐", score: { sparkling: 2, bright: 1, alcohol: 1 } },
+    { text: "冬夜，安静，有香料和热饮", score: { spice: 2, alcohol: 1, mature: 1 }, hidden: { wine: 1 } },
+    { text: "深夜，一个人，灯很暗", score: { dark: 2, bitter: 1, complex: 1 } },
+    { text: "陌生的夜，新鲜，不确定", score: { exotic: 2, premium: 1, complex: 1 }, hidden: { truffle: 1 } }
+  ]},
+  { id: 22, group: "E", groupName: "复杂度", text: "Ta 对“复杂”的态度更接近？", options: [
+    { text: "不喜欢复杂，简单最好", score: { simple: 2, refreshing: 1, bright: 1 } },
+    { text: "可以复杂，但要值得", score: { complex: 1, premium: 1, mature: 1 } },
+    { text: "喜欢复杂，有层次才有趣", score: { complex: 2, exotic: 1, premium: 1 }, hidden: { truffle: 1 } },
+    { text: "越复杂越吸引 Ta", score: { complex: 2, exotic: 2, dark: 1 }, hidden: { truffle: 2, wine: 1 } }
+  ]},
+  { id: 23, group: "F", groupName: "材质", text: "Ta 更像哪种材质？", options: [
+    { text: "玻璃，透明，干净", score: { refreshing: 2, bright: 1, simple: 1 } },
+    { text: "棉布，软，暖", score: { creamy: 2, hot: 1, soft: 1 } },
+    { text: "金属，冷，硬", score: { cold: 2, bitter: 1, mature: 1 } },
+    { text: "旧木头，有纹路，有味道", score: { complex: 2, spice: 1, dark: 1 } }
+  ]},
+  { id: 24, group: "F", groupName: "季节", text: "Ta 如果是一个季节，更像？", options: [
+    { text: "夏天", score: { hot: 2, bright: 2, fruity: 1 } },
+    { text: "春天", score: { floral: 2, refreshing: 1, soft: 1 } },
+    { text: "秋天", score: { tea: 1, mature: 1, spice: 1 } },
+    { text: "冬天", score: { dark: 1, thick: 1, alcohol: 1 } }
+  ]}
+];
+
+const drinks = [
+  { id: 1, name: "青提养乐多", type: "乳酸菌果饮", cup: "tall", mainColor: "#b8e0c2", subColor: "#f4b8d0", layers: 2, topping: "none", mood: "light", score: { cold: 3, sweet: 2, sour: 2, bitter: -3, sparkling: -2, creamy: 1, alcohol: -3, tea: -3, coffee: -3, fruity: 3, floral: 0, refreshing: 3, thick: -1, bright: 3, soft: 1, complex: -1 } },
+  { id: 2, name: "雪顶草莓牛乳", type: "奶饮", cup: "mug", mainColor: "#e84a5f", subColor: "#fff0f3", layers: 2, topping: "cream", mood: "light", score: { cold: 2, sweet: 3, sour: 1, bitter: -3, sparkling: -3, creamy: 3, alcohol: -3, tea: -3, coffee: -3, fruity: 3, floral: 0, refreshing: -1, thick: 3, bright: 2, soft: 2, complex: 0 } },
+  { id: 3, name: "焦糖爆米花拿铁", type: "咖啡", cup: "mug", mainColor: "#b07d3f", subColor: "#f2d18b", layers: 2, topping: "none", mood: "warm", score: { cold: -2, sweet: 2, sour: -2, bitter: 2, sparkling: -3, creamy: 2, alcohol: -3, tea: -3, coffee: 3, fruity: -3, floral: -2, refreshing: -2, thick: 3, bright: 0, soft: 2, complex: 2 } },
+  { id: 4, name: "杨枝甘露", type: "果饮", cup: "tall", mainColor: "#f5c542", subColor: "#fff3c4", layers: 2, topping: "none", mood: "light", score: { cold: 3, sweet: 3, sour: 1, bitter: 1, sparkling: -2, creamy: 1, alcohol: -3, tea: -3, coffee: -3, fruity: 3, floral: -1, refreshing: 2, thick: 1, bright: 3, soft: 1, complex: 2 } },
+  { id: 5, name: "茉莉奶绿", type: "奶茶", cup: "tall", mainColor: "#d9e8b0", subColor: "#f5f0d8", layers: 2, topping: "none", mood: "light", score: { cold: 2, sweet: 2, sour: -1, bitter: -1, sparkling: -2, creamy: 2, alcohol: -3, tea: 3, coffee: -3, fruity: -2, floral: 3, refreshing: 2, thick: 1, bright: 1, soft: 3, complex: 0 } },
+  { id: 6, name: "红枣牛奶", type: "养生奶饮", cup: "mug", mainColor: "#8b2f2f", subColor: "#fff5e6", layers: 2, topping: "none", mood: "warm", score: { cold: -3, sweet: 2, sour: -2, bitter: -3, sparkling: -3, creamy: 3, alcohol: -3, tea: -3, coffee: -3, fruity: 1, floral: -1, refreshing: -3, thick: 3, bright: 0, soft: 3, complex: 0 } },
+  { id: 7, name: "香蕉苹果奶昔", type: "奶昔", cup: "tall", mainColor: "#f2d06b", subColor: "#fff6d6", layers: 1, topping: "none", mood: "light", score: { cold: 1, sweet: 2, sour: 1, bitter: -3, sparkling: -3, creamy: 3, alcohol: -3, tea: -3, coffee: -3, fruity: 2, floral: -2, refreshing: 0, thick: 3, bright: 1, soft: 3, complex: -1 } },
+  { id: 8, name: "草莓热红茶", type: "果茶", cup: "mug", mainColor: "#d94a5a", subColor: "#f7d6d6", layers: 1, topping: "none", mood: "warm", score: { cold: -3, sweet: 2, sour: 1, bitter: 1, sparkling: -3, creamy: -3, alcohol: -3, tea: 3, coffee: -3, fruity: 3, floral: 0, refreshing: 2, thick: 0, bright: 2, soft: 2, complex: 1 } },
+  { id: 9, name: "芋泥豆乳杯", type: "甜品奶饮", cup: "short", mainColor: "#8b6bb1", subColor: "#e8d9f0", layers: 3, topping: "none", mood: "soft", score: { cold: 1, sweet: 2, sour: 1, bitter: -3, sparkling: -3, creamy: 3, alcohol: -3, tea: -3, coffee: -3, fruity: 1, floral: -1, refreshing: -2, thick: 3, bright: 0, soft: 3, complex: 2 } },
+  { id: 10, name: "桂花拿铁", type: "咖啡", cup: "mug", mainColor: "#8b5e3c", subColor: "#f5e6d3", layers: 2, topping: "none", mood: "warm", score: { cold: -2, sweet: 1, sour: -2, bitter: 2, sparkling: -3, creamy: 2, alcohol: -3, tea: -3, coffee: 3, fruity: -3, floral: 3, refreshing: -1, thick: 2, bright: 0, soft: 2, complex: 2 } },
+  { id: 11, name: "橘子冰茶", type: "果茶", cup: "tall", mainColor: "#f29b3d", subColor: "#ffe3b3", layers: 1, topping: "none", mood: "light", score: { cold: 3, sweet: 2, sour: 2, bitter: 0, sparkling: -2, creamy: -3, alcohol: -3, tea: 2, coffee: -3, fruity: 3, floral: 2, refreshing: 3, thick: -2, bright: 3, soft: 1, complex: 0 } },
+  { id: 12, name: "火龙果奶昔", type: "奶昔", cup: "tall", mainColor: "#e84a7a", subColor: "#fff0f5", layers: 1, topping: "none", mood: "light", score: { cold: 2, sweet: 1, sour: 1, bitter: -3, sparkling: -3, creamy: 2, alcohol: -3, tea: -3, coffee: -3, fruity: 2, floral: -1, refreshing: 1, thick: 2, bright: 2, soft: 2, complex: 0 } },
+  { id: 13, name: "抗氧化奶昔", type: "奶昔", cup: "tall", mainColor: "#7b4fa0", subColor: "#e6d6f5", layers: 1, topping: "none", mood: "soft", score: { cold: 2, sweet: 2, sour: 2, bitter: -3, sparkling: -3, creamy: 3, alcohol: -3, tea: -3, coffee: -3, fruity: 3, floral: -1, refreshing: -1, thick: 3, bright: 1, soft: 2, complex: 1 } },
+  { id: 14, name: "伯牙绝弦", type: "奶茶", cup: "tall", mainColor: "#f0e6b8", subColor: "#fffbe6", layers: 2, topping: "none", mood: "light", score: { cold: 2, sweet: 2, sour: -1, bitter: -1, sparkling: -2, creamy: 2, alcohol: -3, tea: 3, coffee: -3, fruity: -2, floral: 3, refreshing: 1, thick: 2, bright: 1, soft: 3, complex: 0 } },
+  { id: 15, name: "芭乐椰椰", type: "果茶奶饮", cup: "tall", mainColor: "#a8d8a0", subColor: "#f5b8c8", layers: 2, topping: "none", mood: "light", score: { cold: 3, sweet: 2, sour: 1, bitter: 0, sparkling: -2, creamy: 1, alcohol: -3, tea: 2, coffee: -3, fruity: 3, floral: 0, refreshing: 3, thick: 0, bright: 3, soft: 1, complex: 1 } },
+  { id: 16, name: "奥利奥海盐奶盖咖啡", type: "咖啡", cup: "tall", mainColor: "#5c4033", subColor: "#d9c7b8", layers: 3, topping: "cream", mood: "dark", score: { cold: 2, sweet: 2, sour: -2, bitter: 2, sparkling: -3, creamy: 3, alcohol: -3, tea: -3, coffee: 3, fruity: -3, floral: -2, refreshing: -2, thick: 3, bright: 0, soft: 1, complex: 3 } },
+  { id: 17, name: "乌梅陈皮饮", type: "中式茶饮", cup: "cup", mainColor: "#8b5a2b", subColor: "#d9b38c", layers: 1, topping: "none", mood: "dark", score: { cold: 0, sweet: 0, sour: 3, bitter: 1, sparkling: -3, creamy: -3, alcohol: -3, tea: 0, coffee: -3, fruity: 1, floral: 2, refreshing: 2, thick: 0, bright: -1, soft: 0, complex: 3, spice: 2, mature: 2 } },
+  { id: 18, name: "星冰乐", type: "冰沙", cup: "tall", mainColor: "#8b6b4a", subColor: "#f5e6d3", layers: 2, topping: "cream", mood: "light", score: { cold: 3, sweet: 3, sour: -3, bitter: -3, sparkling: -3, creamy: 3, alcohol: -3, tea: -3, coffee: -3, fruity: -3, floral: -3, refreshing: -2, thick: 3, bright: 2, soft: 2, complex: -2 } },
+  { id: 19, name: "鸳鸯酸奶咖啡", type: "咖啡", cup: "short", mainColor: "#6b4a2b", subColor: "#fff5e6", layers: 2, topping: "none", mood: "dark", score: { cold: 2, sweet: 0, sour: 2, bitter: 2, sparkling: -3, creamy: 1, alcohol: -3, tea: -3, coffee: 3, fruity: -3, floral: -3, refreshing: 1, thick: 1, bright: -1, soft: 0, complex: 3 } },
+  { id: 20, name: "西瓜椰椰", type: "果饮奶饮", cup: "tall", mainColor: "#f27a8a", subColor: "#ffe6ea", layers: 2, topping: "none", mood: "light", score: { cold: 3, sweet: 2, sour: -1, bitter: -3, sparkling: -2, creamy: 1, alcohol: -3, tea: -3, coffee: -3, fruity: 3, floral: -2, refreshing: 3, thick: 0, bright: 3, soft: 2, complex: -1 } },
+  { id: 21, name: "鲜橙茉莉茶", type: "果茶", cup: "tall", mainColor: "#f5a623", subColor: "#fff0c2", layers: 1, topping: "none", mood: "light", score: { cold: 3, sweet: 1, sour: 3, bitter: 0, sparkling: -2, creamy: -3, alcohol: -3, tea: 2, coffee: -3, fruity: 3, floral: 1, refreshing: 3, thick: -2, bright: 3, soft: 0, complex: 1 } },
+  { id: 22, name: "圣诞热红酒", type: "酒精热饮", cup: "short", mainColor: "#7b1e2b", subColor: "#f2a65a", layers: 1, topping: "spice", mood: "dark", score: { cold: -3, sweet: 1, sour: 1, bitter: 1, sparkling: -3, creamy: -3, alcohol: 3, tea: -2, coffee: -2, fruity: 1, floral: 0, refreshing: -2, thick: 3, bright: -1, soft: 1, complex: 3, spice: 3, mature: 3 }, hidden: true },
+  { id: 23, name: "海盐冰抹茶", type: "抹茶奶饮", cup: "tall", mainColor: "#4a7c4e", subColor: "#d9e8d0", layers: 2, topping: "cream", mood: "dark", score: { cold: 2, sweet: 2, sour: -2, bitter: 2, sparkling: -3, creamy: 3, alcohol: -3, tea: 3, coffee: -3, fruity: -3, floral: 2, refreshing: -1, thick: 3, bright: 0, soft: 1, complex: 2 } },
+  { id: 24, name: "蓝莓桑葚黑枸杞", type: "果汁", cup: "tall", mainColor: "#4a1e6b", subColor: "#b88ad9", layers: 1, topping: "none", mood: "dark", score: { cold: 1, sweet: 1, sour: 2, bitter: 0, sparkling: -3, creamy: -3, alcohol: -3, tea: -2, coffee: -2, fruity: 3, floral: -2, refreshing: 2, thick: 0, bright: -1, soft: 0, complex: 2 } },
+  { id: 25, name: "冷萃黑咖啡", type: "咖啡", cup: "tall", mainColor: "#2b1a12", subColor: "#8b6b4a", layers: 1, topping: "none", mood: "dark", score: { cold: 3, sweet: -3, sour: 1, bitter: 3, sparkling: -3, creamy: -3, alcohol: -3, tea: -3, coffee: 3, fruity: -2, floral: -3, refreshing: 2, thick: 1, bright: -1, soft: -2, complex: 2 } },
+  { id: 26, name: "薄荷莫吉托", type: "酒精气泡", cup: "tall", mainColor: "#a8e6c2", subColor: "#f5fff5", layers: 1, topping: "mint", mood: "light", score: { cold: 3, sweet: 1, sour: 2, bitter: -2, sparkling: 3, creamy: -3, alcohol: 2, tea: -3, coffee: -3, fruity: 1, floral: -1, refreshing: 3, thick: -3, bright: 2, soft: -1, complex: 1 } },
+  { id: 27, name: "姜汁撞奶", type: "中式奶饮", cup: "mug", mainColor: "#f5e6c8", subColor: "#e6d0a8", layers: 1, topping: "none", mood: "warm", score: { cold: -3, sweet: 1, sour: -3, bitter: -3, sparkling: -3, creamy: 3, alcohol: -3, tea: -3, coffee: -3, fruity: -3, floral: -3, refreshing: -3, thick: 3, bright: 0, soft: 1, complex: 0, spice: 2 } },
+  { id: 28, name: "可可脏脏奶", type: "可可奶饮", cup: "mug", mainColor: "#3b2314", subColor: "#8b5e3c", layers: 2, topping: "cream", mood: "dark", score: { cold: 1, sweet: 2, sour: -3, bitter: 2, sparkling: -3, creamy: 3, alcohol: -3, tea: -1, coffee: -3, fruity: -3, floral: -3, refreshing: -3, thick: 3, bright: -2, soft: 2, complex: 2 } },
+  { id: 29, name: "豆乳玉麒麟", type: "植物基茶饮", cup: "tall", mainColor: "#e8dcc0", subColor: "#f5f0e0", layers: 2, topping: "none", mood: "soft", score: { cold: 1, sweet: 1, sour: -1, bitter: 0, sparkling: -3, creamy: 2, alcohol: -3, tea: 2, coffee: -3, fruity: -2, floral: 2, refreshing: 1, thick: 2, bright: 1, soft: 3, complex: 1 } },
+  { id: 30, name: "海盐柚子苏打", type: "气泡果饮", cup: "tall", mainColor: "#f5e6a8", subColor: "#fffbe6", layers: 1, topping: "none", mood: "light", score: { cold: 3, sweet: 1, sour: 2, bitter: 1, sparkling: 3, creamy: -3, alcohol: -3, tea: -3, coffee: -3, fruity: 3, floral: -2, refreshing: 3, thick: -3, bright: 3, soft: -1, complex: 1 } },
+  { id: 31, name: "烟熏威士忌可乐", type: "酒精夜饮", cup: "short", mainColor: "#2b1a12", subColor: "#8b3a1a", layers: 1, topping: "none", mood: "dark", score: { cold: 2, sweet: 1, sour: 1, bitter: 1, sparkling: 2, creamy: -3, alcohol: 3, tea: -2, coffee: -2, fruity: 0, floral: -2, refreshing: 1, thick: 2, bright: -1, soft: -1, complex: 3, spice: 2, mature: 3 } },
+  { id: 32, name: "桂花酒酿酸奶", type: "发酵甜品饮", cup: "short", mainColor: "#f0e6c8", subColor: "#e6c8a8", layers: 2, topping: "none", mood: "soft", score: { cold: 1, sweet: 2, sour: 1, bitter: -3, sparkling: -3, creamy: 2, alcohol: 1, tea: -3, coffee: -3, fruity: -1, floral: 3, refreshing: 0, thick: 2, bright: 1, soft: 3, complex: 2 } },
+  { id: 33, name: "柠檬罗勒苏打", type: "气泡草本", cup: "tall", mainColor: "#c8e6b8", subColor: "#f0fff0", layers: 1, topping: "herb", mood: "light", score: { cold: 3, sweet: 0, sour: 3, bitter: 0, sparkling: 3, creamy: -3, alcohol: -3, tea: -3, coffee: -3, fruity: 2, floral: -1, refreshing: 3, thick: -3, bright: 2, soft: -2, complex: 2 } },
+  { id: 34, name: "黑芝麻豆乳", type: "植物基养生奶饮", cup: "mug", mainColor: "#3b3b3b", subColor: "#8b8b8b", layers: 1, topping: "none", mood: "dark", score: { cold: -3, sweet: 1, sour: -3, bitter: 0, sparkling: -3, creamy: 3, alcohol: -3, tea: -2, coffee: -2, fruity: -3, floral: -3, refreshing: -3, thick: 3, bright: -2, soft: 2, complex: 1 } },
+  { id: 35, name: "西柚迷迭香冰茶", type: "草本果茶", cup: "tall", mainColor: "#f2a8a8", subColor: "#f5e6d3", layers: 1, topping: "herb", mood: "light", score: { cold: 3, sweet: 0, sour: 3, bitter: 2, sparkling: -2, creamy: -3, alcohol: -3, tea: 2, coffee: -3, fruity: 3, floral: 0, refreshing: 3, thick: -1, bright: 1, soft: -1, complex: 3 } },
+  { id: 36, name: "棉花糖热可可", type: "可可热饮", cup: "mug", mainColor: "#8b5e3c", subColor: "#fff5e6", layers: 1, topping: "marshmallow", mood: "warm", score: { cold: -3, sweet: 3, sour: -3, bitter: -2, sparkling: -3, creamy: 3, alcohol: -3, tea: -3, coffee: -3, fruity: -3, floral: -3, refreshing: -3, thick: 3, bright: 1, soft: 3, complex: -2 } },
+  { id: 37, name: "百香果双响炮", type: "果茶", cup: "tall", mainColor: "#f5c542", subColor: "#fff3c4", layers: 1, topping: "pearl", mood: "light", score: { cold: 3, sweet: 2, sour: 3, bitter: 0, sparkling: -2, creamy: -3, alcohol: -3, tea: 2, coffee: -3, fruity: 3, floral: 0, refreshing: 3, thick: 0, bright: 3, soft: 0, complex: 1 } },
+  { id: 38, name: "黑糖珍珠鲜奶", type: "奶茶", cup: "tall", mainColor: "#5c3a21", subColor: "#f5e6d3", layers: 2, topping: "pearl", mood: "warm", score: { cold: 1, sweet: 3, sour: -3, bitter: 0, sparkling: -3, creamy: 3, alcohol: -3, tea: -3, coffee: -3, fruity: -3, floral: -3, refreshing: -3, thick: 3, bright: 1, soft: 3, complex: 0 } },
+  { id: 39, name: "椰子水", type: "天然饮品", cup: "tall", mainColor: "#e8f5e8", subColor: "#ffffff", layers: 1, topping: "none", mood: "light", score: { cold: 3, sweet: 0, sour: 0, bitter: -2, sparkling: -3, creamy: -3, alcohol: -3, tea: -3, coffee: -3, fruity: 1, floral: -2, refreshing: 3, thick: -3, bright: 2, soft: 1, complex: -3 } },
+  { id: 40, name: "番茄梅子冰茶", type: "果茶", cup: "tall", mainColor: "#d94a4a", subColor: "#f5d6d6", layers: 1, topping: "none", mood: "light", score: { cold: 3, sweet: 1, sour: 3, bitter: 0, sparkling: -2, creamy: -3, alcohol: -3, tea: 2, coffee: -3, fruity: 2, floral: -1, refreshing: 3, thick: -1, bright: 1, soft: 0, complex: 3 } },
+  { id: 41, name: "薄荷巧克力奶昔", type: "奶昔", cup: "tall", mainColor: "#a8e6b8", subColor: "#5c3a21", layers: 1, topping: "none", mood: "light", score: { cold: 3, sweet: 3, sour: -2, bitter: 1, sparkling: -3, creamy: 3, alcohol: -3, tea: -3, coffee: -3, fruity: -3, floral: -2, refreshing: 1, thick: 3, bright: 1, soft: 1, complex: 2 } },
+  { id: 42, name: "杏仁奶", type: "坚果奶饮", cup: "mug", mainColor: "#f5f0e0", subColor: "#e8dcc0", layers: 1, topping: "none", mood: "soft", score: { cold: 1, sweet: 1, sour: -3, bitter: 0, sparkling: -3, creamy: 2, alcohol: -3, tea: -3, coffee: -3, fruity: -3, floral: -1, refreshing: -1, thick: 2, bright: 0, soft: 3, complex: 0 } },
+  { id: 43, name: "洛神玫瑰饮", type: "花茶", cup: "cup", mainColor: "#8b1e3b", subColor: "#d94a6b", layers: 1, topping: "flower", mood: "dark", score: { cold: 1, sweet: 0, sour: 3, bitter: 0, sparkling: -3, creamy: -3, alcohol: -3, tea: -2, coffee: -2, fruity: 1, floral: 3, refreshing: 3, thick: -2, bright: 0, soft: 0, complex: 3 } },
+  { id: 44, name: "姜汁汽水", type: "气泡辛辣", cup: "tall", mainColor: "#f5e6a8", subColor: "#fffbe6", layers: 1, topping: "none", mood: "light", score: { cold: 3, sweet: 1, sour: 1, bitter: 0, sparkling: 3, creamy: -3, alcohol: -3, tea: -3, coffee: -3, fruity: 0, floral: -2, refreshing: 3, thick: -3, bright: 2, soft: -2, complex: 1, spice: 3 } },
+  { id: 45, name: "咖啡汤力", type: "气泡咖啡", cup: "tall", mainColor: "#3b2314", subColor: "#d9c7b8", layers: 1, topping: "none", mood: "dark", score: { cold: 3, sweet: -1, sour: 2, bitter: 3, sparkling: 3, creamy: -3, alcohol: -3, tea: -3, coffee: 3, fruity: 0, floral: -2, refreshing: 3, thick: -2, bright: 0, soft: -2, complex: 3 } },
+  { id: 46, name: "米酿甜酒", type: "中式甜酒", cup: "cup", mainColor: "#f0e6c8", subColor: "#e6d0a8", layers: 1, topping: "flower", mood: "warm", score: { cold: 1, sweet: 2, sour: 1, bitter: -3, sparkling: -3, creamy: 0, alcohol: 2, tea: -3, coffee: -3, fruity: -2, floral: 2, refreshing: 0, thick: 2, bright: 1, soft: 3, complex: 2 } },
+  { id: 47, name: "黑松露蜂蜜拿铁", type: "猎奇咖啡", cup: "mug", mainColor: "#3b2314", subColor: "#8b6b4a", layers: 2, topping: "none", mood: "dark", score: { cold: 1, sweet: 1, sour: -2, bitter: 2, sparkling: -3, creamy: 2, alcohol: -3, tea: -3, coffee: 3, fruity: -3, floral: -3, refreshing: -2, thick: 3, bright: -2, soft: 0, complex: 3, exotic: 3, premium: 3, mature: 3 }, hidden: true },
+  { id: 48, name: "玫瑰荔枝气泡水", type: "气泡花饮", cup: "tall", mainColor: "#f5b8d0", subColor: "#fff0f5", layers: 1, topping: "flower", mood: "light", score: { cold: 3, sweet: 3, sour: 0, bitter: -3, sparkling: 3, creamy: -3, alcohol: -3, tea: -3, coffee: -3, fruity: 3, floral: 3, refreshing: 3, thick: -3, bright: 3, soft: 2, complex: 1 } }
+];
+const drinkTexts = {
+  1: {
+    tagLabel: "清爽",
+    tagSentence: "像夏天第一口气泡水，酸酸甜甜，但不腻。",
+    keywords: ["元气", "酸甜", "轻盈"],
+    analysis: [
+      "第一眼就是好接近的类型。没什么架子，笑起来很轻，像青提和养乐多撞在一起的那种味道。",
+      "不是没心没肺。其实心里有数，只是不太喜欢把气氛弄沉重。",
+      "酸甜比例刚刚好，所以偶尔会让人觉得：看起来软，其实有自己的小脾气。"
+    ],
+    relation: {
+      others: "好聊，爱笑，谁都能搭上话。但真要走近，会发现这人其实有筛选。",
+      intimate: "喜欢就是喜欢，不太藏。但需要对方跟得上节奏，太闷会无聊。",
+      suitable: "适合直接、有趣、愿意一起玩的人。不适合太沉、太慢、太需要猜的人。"
+    },
+    recipe: {
+      ingredients: ["青提 8—10 颗", "养乐多 1 瓶", "莓莓桃桃果酱 1 勺", "冰块 适量"],
+      steps: ["青提洗净，对半切开。", "杯中放入冰块，加入青提。", "倒入养乐多。", "加一勺莓莓桃桃果酱，轻轻搅开。", "顶部可再放两颗青提装饰。"]
+    }
+  },
+  2: {
+    tagLabel: "浓郁",
+    tagSentence: "像被人偏爱的红色，甜得很直接，不绕弯。",
+    keywords: ["被偏爱", "直球", "安全感"],
+    analysis: [
+      "喜欢就会说喜欢，不太藏。像雪顶草莓牛乳，第一口就是甜的。",
+      "不是傻白甜。只是觉得，既然喜欢，就没必要装冷淡。",
+      "情绪外露，但心里其实有数。被宠大的那种底气，写在骨子里。"
+    ],
+    relation: {
+      others: "热情，好接近，让人放松。像冬天里有人递过来一杯热的。",
+      intimate: "黏人，但不会让人烦。需要回应，需要被放在心上。",
+      suitable: "适合直接、稳定、愿意给回应的人。不适合太冷、太慢、太爱玩消失的人。"
+    },
+    recipe: {
+      ingredients: ["草莓 6—8 颗", "草莓果酱 1 勺", "纯牛奶 180ml", "淡奶油 60ml", "冻干草莓碎 适量"],
+      steps: ["草莓洗净去蒂，部分捣碎。", "杯中放草莓果酱和碎草莓。", "倒入牛奶。", "淡奶油打发，铺在顶部。", "撒冻干草莓碎。"]
+    }
+  },
+  3: {
+    tagLabel: "暖甜",
+    tagSentence: "像电影院散场后，还留在座位上的那点温度。",
+    keywords: ["治愈", "成熟", "疲惫感"],
+    analysis: [
+      "表面成熟，心里其实很软。像焦糖爆米花拿铁，甜里带一点咖啡的苦。",
+      "不太爱说自己的事，但很会听别人说。",
+      "有点累，但还在撑。撑得很安静。"
+    ],
+    relation: {
+      others: "舒服，稳，像一件旧毛衣。不会让你紧张。",
+      intimate: "不太主动，但很认真。需要对方先走一步。",
+      suitable: "适合温柔、有耐心、愿意慢慢来的人。不适合太急、太自我的人。"
+    },
+    recipe: {
+      ingredients: ["浓缩咖啡 1 份", "牛奶 180ml", "焦糖酱 1 勺", "爆米花 适量", "厚椰乳 30ml"],
+      steps: ["杯中加焦糖酱。", "倒入浓缩咖啡。", "加入热牛奶和厚椰乳。", "顶部放几颗爆米花。", "热饮。"]
+    }
+  },
+  4: {
+    tagLabel: "热带",
+    tagSentence: "像夏天最丰盛的那一口，甜里有一点西柚的苦。",
+    keywords: ["明亮", "丰盛", "有分寸"],
+    analysis: [
+      "人缘好，会照顾人。像杨枝甘露，什么都有，但搭在一起不乱。",
+      "看起来甜，其实有分寸。西柚那一口苦，就是底线。",
+      "会享受生活，也懂什么时候该收。"
+    ],
+    relation: {
+      others: "热情，周到，谁都能聊。但真正走进心里的不多。",
+      intimate: "愿意付出，但需要被看见。不喜欢单方面。",
+      suitable: "适合懂得回应、有生活感的人。不适合太闷、太计较的人。"
+    },
+    recipe: {
+      ingredients: ["芒果 1 个", "西柚 半个", "西米 30g", "厚椰乳 150ml"],
+      steps: ["西米煮至透明，过冷水。", "芒果切块，部分打泥。", "西柚剥出果肉。", "杯中放西米、芒果泥、椰乳。", "顶部放芒果块和西柚。"]
+    }
+  },
+  5: {
+    tagLabel: "温柔",
+    tagSentence: "像一阵很轻的风，不吵，但让人记得住。",
+    keywords: ["白月光", "安静", "干净"],
+    analysis: [
+      "存在感不吵，但很稳。像茉莉绿茶加奶，第一口不惊艳，喝久了会上瘾。",
+      "脾气好，说话轻，不太会主动争什么。但不是没底线，只是懒得吵。",
+      "温柔里带着一点清醒。知道自己要什么，也知道什么时候该退。"
+    ],
+    relation: {
+      others: "舒服，安全，不用防着。像那种可以安静待在一起也不尴尬的人。",
+      intimate: "慢热，但一旦认了就很稳。不太会轰轰烈烈，但会一直在。",
+      suitable: "适合稳定、真诚、不逼问的人。不适合太急、太闹、太需要立刻回应的人。"
+    },
+    recipe: {
+      ingredients: ["旺仔牛奶 150ml", "茉莉绿茶 100ml", "冰块 适量"],
+      steps: ["茉莉绿茶提前泡好，放凉。", "杯中放入冰块。", "倒入旺仔牛奶。", "再加入茉莉绿茶。", "轻轻搅匀即可。"]
+    }
+  },
+  6: {
+    tagLabel: "照顾",
+    tagSentence: "像冬天里有人记得你胃不好，默默递过来的那杯。",
+    keywords: ["温暖", "踏实", "细水长流"],
+    analysis: [
+      "会照顾人，不太说漂亮话。像红枣牛奶，暖，实在。",
+      "不是没脾气，只是觉得没必要。",
+      "对谁好都默默记着，不邀功。"
+    ],
+    relation: {
+      others: "安心，像家。不用防着，也不用装。",
+      intimate: "细水长流型。不轰烈，但一直在。",
+      suitable: "适合真诚、稳定、懂得珍惜的人。不适合太飘、太爱玩的人。"
+    },
+    recipe: {
+      ingredients: ["红枣 5 颗", "枸杞 5 粒", "纯牛奶 250ml"],
+      steps: ["红枣去核切块。", "和枸杞一起放入锅中。", "倒入牛奶，小火加热。", "微热即可，不要煮沸。", "倒入杯中，热饮。"]
+    }
+  },
+  7: {
+    tagLabel: "日常",
+    tagSentence: "像早餐桌上那杯不花哨、但每天都想喝的奶昔。",
+    keywords: ["朴实", "可靠", "居家"],
+    analysis: [
+      "生活型的人。不花哨，但很稳。像香蕉苹果奶昔，简单，饱腹。",
+      "情绪稳定，作息规律。是那种会提醒你吃饭的人。",
+      "不是最抢眼，但最让人安心。"
+    ],
+    relation: {
+      others: "舒服，安全，不用演。像认识很久的老朋友。",
+      intimate: "不折腾，不试探。喜欢就是好好在一起。",
+      suitable: "适合踏实、想过日子的人。不适合太闹、太需要刺激的人。"
+    },
+    recipe: {
+      ingredients: ["香蕉 1 根", "苹果 半个", "牛奶 200ml"],
+      steps: ["香蕉、苹果切块。", "和牛奶一起放入搅拌机。", "打至顺滑。", "倒入杯中，可加冰块。"]
+    }
+  },
+  8: {
+    tagLabel: "暖甜",
+    tagSentence: "像冬天手里捧着的那杯茶，甜，但不清。",
+    keywords: ["温柔", "清醒", "不腻"],
+    analysis: [
+      "外表甜，内里清醒。像草莓热红茶，暖，但不腻。",
+      "有原则，只是不吵。",
+      "比看起来更有主意。"
+    ],
+    relation: {
+      others: "好相处，有分寸。像冬天里一杯让人放松的茶。",
+      intimate: "温柔，但不随便。需要对方也认真。",
+      suitable: "适合成熟、有边界感的人。不适合太幼稚、太黏的人。"
+    },
+    recipe: {
+      ingredients: ["草莓 5 颗", "红茶包 1 个", "冰糖 适量"],
+      steps: ["红茶泡好。", "草莓切块，和冰糖一起放入杯中。", "倒入热红茶。", "稍泡片刻即可。"]
+    }
+  },
+  9: {
+    tagLabel: "软糯",
+    tagSentence: "像紫色的小房间，安静，软，只给熟人开门。",
+    keywords: ["慢热", "宅", "温柔"],
+    analysis: [
+      "慢热，内向。像芋泥豆乳杯，层次多，但不吵。",
+      "有自己的小世界。熟了以后很黏。",
+      "看起来冷，其实软。"
+    ],
+    relation: {
+      others: "安静，不抢话。熟了才发现很好玩。",
+      intimate: "黏人，但需要安全感。不喜欢被突然推开。",
+      suitable: "适合温柔、稳定、愿意慢慢靠近的人。不适合太吵、太急的人。"
+    },
+    recipe: {
+      ingredients: ["芋头 100g", "紫薯 50g", "香蕉 半根", "酸奶 100g", "豆浆粉 1 勺", "蓝莓 适量", "牛奶 100ml"],
+      steps: ["芋头、紫薯蒸熟压泥。", "香蕉、酸奶、牛奶打底。", "加入芋泥和豆浆粉。", "顶部放蓝莓。", "冷饮。"]
+    }
+  },
+  10: {
+    tagLabel: "清雅",
+    tagSentence: "像秋天第一阵风，安静，有距离，但不冷。",
+    keywords: ["成熟", "白月光", "克制"],
+    analysis: [
+      "话不多，但一开口有分量。像桂花拿铁，秋天，雅。",
+      "有距离，但不冷。只是不太主动。",
+      "适合放在心里，不太适合天天见面。"
+    ],
+    relation: {
+      others: "安静，有教养。像秋天，舒服但不热。",
+      intimate: "克制，认真。不轻易开始，开始了就不轻易放。",
+      suitable: "适合成熟、有分寸、能欣赏安静的人。不适合太吵、太黏的人。"
+    },
+    recipe: {
+      ingredients: ["浓缩咖啡 1 份", "牛奶 180ml", "桂花酱 1 勺"],
+      steps: ["杯中加桂花酱。", "倒入浓缩咖啡。", "加入热牛奶。", "轻轻搅开，热饮。"]
+    }
+  },
+  11: {
+    tagLabel: "阳光",
+    tagSentence: "像夏天操场上的风，橙色，干净，有精神。",
+    keywords: ["元气", "直接", "夏天"],
+    analysis: [
+      "阳光，直接，爱笑。像橘子冰茶，橙色，清爽。",
+      "行动力强，不拖泥带水。",
+      "不是没烦恼，只是不摆脸上。"
+    ],
+    relation: {
+      others: "热闹，好聊，让人开心。像夏天。",
+      intimate: "直接，不猜。喜欢就说，不喜欢也说明白。",
+      suitable: "适合同样直接、有活力的人。不适合太闷、太爱猜的人。"
+    },
+    recipe: {
+      ingredients: ["橘子 2 个", "茉莉花茶 150ml", "蜂蜜 1 勺", "冰块 适量"],
+      steps: ["橘子榨汁。", "茉莉花茶放凉。", "杯中加冰块。", "倒入橘汁和茶。", "加蜂蜜搅匀。"]
+    }
+  },
+  12: {
+    tagLabel: "轻食",
+    tagSentence: "像健身后那杯自拍里的奶昔，漂亮，自律，微甜。",
+    keywords: ["自律", "漂亮", "轻熟"],
+    analysis: [
+      "爱美，有仪式感。像火龙果奶昔，漂亮，微甜。",
+      "看起来温柔，其实有主见。",
+      "不太麻烦别人，也不太让别人麻烦自己。"
+    ],
+    relation: {
+      others: "舒服，干净。像轻食店里的那种氛围。",
+      intimate: "认真，但不黏。需要自己的空间。",
+      suitable: "适合自律、有生活感的人。不适合太乱、太随意的人。"
+    },
+    recipe: {
+      ingredients: ["火龙果 半个", "香蕉 1 根", "即食燕麦 15g", "酸奶 100g"],
+      steps: ["火龙果、香蕉切块。", "和酸奶、燕麦一起打。", "倒入杯中。", "冷饮。"]
+    }
+  },
+  13: {
+    tagLabel: "莓果",
+    tagSentence: "像紫色清晨，健康，微酸，不好骗。",
+    keywords: ["自律", "温柔", "有距离"],
+    analysis: [
+      "注重健康，有点小精致。像莓果奶昔，紫，酸，浓。",
+      "情绪稳定，但心里有酸。",
+      "看起来温柔，其实不好骗。"
+    ],
+    relation: {
+      others: "舒服，有分寸。像清晨的健身房。",
+      intimate: "认真，但不轻易交心。需要时间。",
+      suitable: "适合稳定、有耐心的人。不适合太急、太油的人。"
+    },
+    recipe: {
+      ingredients: ["草莓 4 颗", "树莓 6 颗", "蓝莓 10 颗", "牛奶 180ml"],
+      steps: ["莓果洗净。", "和牛奶一起打。", "倒入杯中。", "冷饮。"]
+    }
+  },
+  14: {
+    tagLabel: "知性",
+    tagSentence: "像安静书房里那杯茶，不吵，但一直在。",
+    keywords: ["白月光", "温柔", "距离"],
+    analysis: [
+      "温柔，有距离。像伯牙绝弦，茉莉，奶，干净。",
+      "说话慢，情绪稳。",
+      "适合放在心里。"
+    ],
+    relation: {
+      others: "安静，舒服。像图书馆靠窗的位置。",
+      intimate: "慢热，但认真。不轻易开始。",
+      suitable: "适合成熟、安静、有耐心的人。不适合太吵、太急的人。"
+    },
+    recipe: {
+      ingredients: ["纯牛奶 120ml", "茉莉茶 100ml", "旺仔牛奶 50ml", "冰块 适量"],
+      steps: ["茉莉茶泡好放凉。", "杯中加冰块。", "倒入纯奶和旺仔。", "加入茉莉茶。", "搅匀。"]
+    }
+  },
+  15: {
+    tagLabel: "热带",
+    tagSentence: "像海边那阵绿粉色的风，特别，但好接近。",
+    keywords: ["异域", "活泼", "特别"],
+    analysis: [
+      "外向，爱新鲜。像芭乐椰椰，绿粉，热带。",
+      "有自己的怪，但不难相处。",
+      "喜欢就靠近，不喜欢就走。"
+    ],
+    relation: {
+      others: "有趣，特别。像旅行路上遇到的人。",
+      intimate: "热情，但需要新鲜感。不喜欢无聊。",
+      suitable: "适合同样爱玩、爱新鲜的人。不适合太闷、太规矩的人。"
+    },
+    recipe: {
+      ingredients: ["芭乐 1 个", "绿茶 120ml", "椰奶 80ml", "冰块 适量"],
+      steps: ["芭乐切块，部分捣碎。", "杯中加冰块和芭乐。", "倒入绿茶。", "加入椰奶。", "轻搅。"]
+    }
+  },
+  16: {
+    tagLabel: "浓郁",
+    tagSentence: "像深夜还亮着灯的那家店，甜、苦、咸，都在一杯里。",
+    keywords: ["叛逆", "复杂", "都市"],
+    analysis: [
+      "白天和晚上像两个人。表面正经，心里其实不太服管。",
+      "喜欢甜，也接受苦。奥利奥、海盐、奶盖、咖啡，全搅在一起也不觉得乱。",
+      "不是故意复杂。只是单纯觉得，活着没必要只选一种味道。"
+    ],
+    relation: {
+      others: "有趣，有梗，但不太好定义。熟之前觉得酷，熟之后发现挺黏。",
+      intimate: "需要新鲜感，也需要安全感。太无聊会跑，太控制也会跑。",
+      suitable: "适合接得住情绪起伏、不急着下定义的人。不适合太规矩、太爱说教的人。"
+    },
+    recipe: {
+      ingredients: ["浓缩咖啡 1 份", "牛奶 150ml", "奥利奥碎 适量", "淡奶油 80ml", "糖 1 小勺", "盐 一小撮"],
+      steps: ["杯中加冰块，倒入牛奶。", "缓缓加入浓缩咖啡，形成分层。", "淡奶油加糖和盐，打发成奶盖。", "把奶盖铺在咖啡上。", "撒奥利奥碎，插吸管。"]
+    }
+  },
+  17: {
+    tagLabel: "中式",
+    tagSentence: "像旧时光里那杯酸涩的饮，清醒，有故事。",
+    keywords: ["古典", "酸涩", "念旧"],
+    analysis: [
+      "经历过事。像乌梅陈皮饮，酸，烟熏，旧。",
+      "说话有分寸，念旧。",
+      "有点清冷，但心里有玫瑰。"
+    ],
+    relation: {
+      others: "有距离，但有味道。像老唱片。",
+      intimate: "慢，深。不轻易开始，开始了就很重。",
+      suitable: "适合有耐心、懂旧的人。不适合太新、太快的人。"
+    },
+    recipe: {
+      ingredients: ["乌梅条 3 条", "玫瑰 少许", "桑葚 5 颗", "陈皮 1 片", "山楂干 3 片"],
+      steps: ["所有材料洗净。", "放入锅中加水。", "小火煮 15 分钟。", "加冰糖调味。", "过滤，冷热皆可。"]
+    }
+  },
+  18: {
+    tagLabel: "热闹",
+    tagSentence: "像商场里那群笑着的人，甜，奶油，不复杂。",
+    keywords: ["开心果", "团宠", "甜"],
+    analysis: [
+      "爱玩，爱笑。像星冰乐，奶油，饼干，冰沙。",
+      "不复杂，也不装。",
+      "喜欢热闹，也喜欢朋友。"
+    ],
+    relation: {
+      others: "好玩，热闹。像聚会里最亮的那盏灯。",
+      intimate: "甜，黏，需要回应。不喜欢冷落。",
+      suitable: "适合热情、爱玩、愿意陪 Ta 的人。不适合太冷、太闷的人。"
+    },
+    recipe: {
+      ingredients: ["牛奶 150ml", "小饼干 3 块", "冰块 适量", "淡奶油 60ml", "炼乳 1 勺"],
+      steps: ["牛奶、冰块、饼干一起打。", "倒入杯中。", "顶部挤淡奶油。", "淋炼乳。", "冷饮。"]
+    }
+  },
+  19: {
+    tagLabel: "清醒",
+    tagSentence: "像加班到深夜的人，酸，苦，但还站着。",
+    keywords: ["独立", "矛盾", "现代"],
+    analysis: [
+      "清醒，独立。像鸳鸯酸奶咖啡，酸苦，双拼。",
+      "表面冷，心里有自己的逻辑。",
+      "又清醒又累。"
+    ],
+    relation: {
+      others: "有距离，但不讨厌。像办公室里最靠谱的人。",
+      intimate: "不黏，不哄。需要对方也独立。",
+      suitable: "适合成熟、独立、不黏人的人。不适合太需要情绪价值的人。"
+    },
+    recipe: {
+      ingredients: ["酸奶 100g", "浓缩咖啡 1 份", "冰块 适量"],
+      steps: ["杯中加酸奶。", "加冰块。", "缓缓倒入浓缩咖啡。", "形成双拼分层。"]
+    }
+  },
+  20: {
+    tagLabel: "夏天",
+    tagSentence: "像海边那杯粉红色的水，简单，快乐，甜。",
+    keywords: ["邻家", "元气", "治愈"],
+    analysis: [
+      "阳光，简单。像西瓜椰椰，粉红，清爽。",
+      "爱笑，不复杂。",
+      "夏天感很重。"
+    ],
+    relation: {
+      others: "舒服，快乐。像夏天海边。",
+      intimate: "直接，甜。喜欢就说。",
+      suitable: "适合简单、阳光的人。不适合太复杂、太爱猜的人。"
+    },
+    recipe: {
+      ingredients: ["西瓜 200g", "脆波波 1 勺", "冰块 适量", "厚椰乳 100ml"],
+      steps: ["西瓜切块，部分捣碎。", "杯中加冰块和西瓜。", "加脆波波。", "倒入厚椰乳。", "轻搅。"]
+    }
+  },
+  21: {
+    tagLabel: "阳光",
+    tagSentence: "像夏天操场跑完步那口气，酸，透，有精神。",
+    keywords: ["活力", "直接", "干净"],
+    analysis: [
+      "行动力强，爱笑。像鲜橙茉莉茶，酸，透。",
+      "不拖泥带水。",
+      "运动系。"
+    ],
+    relation: {
+      others: "热闹，阳光。像夏天。",
+      intimate: "直接，不猜。喜欢就靠近。",
+      suitable: "适合同样有活力、直接的人。不适合太闷、太慢的人。"
+    },
+    recipe: {
+      ingredients: ["橙子 1 个", "茉莉绿茶 150ml", "小金桔 2 个", "柠檬 2 片", "冰糖 适量"],
+      steps: ["橙子、金桔、柠檬切好。", "杯中加冰块和水果。", "倒入茉莉绿茶。", "加冰糖搅匀。"]
+    }
+  },
+  22: {
+    tagLabel: "香料",
+    tagSentence: "冬夜里一杯不该轻易递出去的热酒。",
+    keywords: ["成熟", "暧昧", "故事感"],
+    analysis: [
+      "第一眼不会觉得这人热烈。更像冬天里那杯热红酒，闻着暖，橙子、肉桂、丁香混在一起，真喝下去才发现有酒精，有酸，有一点不敢一口喝完的东西。",
+      "不是不愿意靠近别人。只是太清楚，有些门一旦打开，就关不回去了。所以温柔归温柔，心里总留一块地方，不给任何人看。",
+      "成熟不是装出来的，是经历换的。懂得照顾情绪，也懂得什么时候该退场。但有时候太习惯自己消化，身边人会觉得：明明离得很近，就是走不到最里面。",
+      "不是不信任你。只是太明白，信任这件事，给出去容易，收回来难。"
+    ],
+    relation: {
+      others: "好聊，有分寸，但不一定敢随便开玩笑。对谁都客气，对谁都温柔，但那条线一直在。",
+      intimate: "不黏人，也不冷淡。会记得你说过的话，会在细节里对你好。但需要自己的空间，也需要你尊重沉默。不怕孤独，怕的是被打扰之后，又回到孤独。",
+      suitable: "情绪稳定，不逼问，能接住偶尔不说话的人。那种“你不用一直说，我也知道你在”的人。不适合太急、太吵、太需要立刻得到回应的人。"
+    },
+    recipe: {
+      ingredients: ["红酒 200ml", "橙子 半个，切片", "白砂糖 1—2 小勺", "八角 1 颗", "草果 1 颗，拍裂", "话梅 2—3 颗", "丁香 3—4 粒", "桂皮 1 小段"],
+      steps: ["橙子切片，和红酒一起放入小锅。", "加入八角、草果、话梅、丁香、桂皮。", "小火加热，不要煮沸，保持微热约 10 分钟。", "加糖搅拌至融化，关火。", "过滤掉香料，倒入杯中。", "可再放一片橙子装饰，热饮。"]
+    }
+  },
+  23: {
+    tagLabel: "日系",
+    tagSentence: "像安静房间里那杯抹茶，甜里带苦，不吵。",
+    keywords: ["清冷", "文艺", "有距离"],
+    analysis: [
+      "安静，内敛。像海盐冰抹茶，绿，苦，奶。",
+      "有自己的世界。不太解释。",
+      "表面温和，底线清楚。"
+    ],
+    relation: {
+      others: "安静，舒服。像日式小店靠窗的位置。",
+      intimate: "慢热，但认真。需要对方尊重沉默。",
+      suitable: "适合安静、有耐心、能欣赏独处的人。不适合太吵、太黏的人。"
+    },
+    recipe: {
+      ingredients: ["抹茶粉 3g", "炼乳 1 勺", "牛奶 150ml", "淡奶油 50ml", "盐 一小撮", "茉莉花茶 50ml", "冰块 适量"],
+      steps: ["抹茶粉加少量温水调开。", "杯中加冰块和炼乳。", "倒入牛奶和茉莉花茶。", "加入抹茶液。", "顶部铺淡奶油，撒一点盐。"]
+    }
+  },
+  24: {
+    tagLabel: "清冷",
+    tagSentence: "像深紫色的独处，安静，微酸，不讨好。",
+    keywords: ["独立", "神秘", "安静"],
+    analysis: [
+      "安静，独立。像蓝莓桑葚黑枸杞，深紫，无奶。",
+      "有自己世界。不太解释。",
+      "不甜腻，不讨好人。"
+    ],
+    relation: {
+      others: "有距离，但让人好奇。像深夜书店。",
+      intimate: "慢，深。不轻易交心。",
+      suitable: "适合独立、有耐心的人。不适合太吵、太需要回应的人。"
+    },
+    recipe: {
+      ingredients: ["蓝莓 10 颗", "桑葚 8 颗", "黑枸杞 5 粒", "水 200ml"],
+      steps: ["材料洗净。", "放入杯中。", "加温水或冷水。", "泡 5 分钟。", "冷热皆可。"]
+    }
+  },
+  25: {
+    tagLabel: "极简",
+    tagSentence: "像凌晨四点还醒着的人，清醒，安静，不需要谁陪。",
+    keywords: ["克制", "清醒", "距离"],
+    analysis: [
+      "话不多，但每句都有分量。像冷萃黑咖啡，没有奶没有糖，苦得很直接。",
+      "不喜欢解释，也不喜欢被追问。不是冷，是觉得很多事说多了没意思。",
+      "边界感很强。能靠近的人不多，但一旦放进来了，就是真的认。"
+    ],
+    relation: {
+      others: "有距离，但不讨厌。像那种坐在角落不说话，但你会忍不住多看两眼的人。",
+      intimate: "不黏，不哄，不轻易承诺。但答应的事一定会做到。",
+      suitable: "适合独立、不黏人、能接受沉默的人。不适合太热情、太需要被哄的人。"
+    },
+    recipe: {
+      ingredients: ["冷萃咖啡液 60ml", "冰水 150ml", "冰块 适量"],
+      steps: ["杯中放入冰块。", "倒入冰水。", "缓缓加入冷萃咖啡液。", "轻轻搅一下，完成。"]
+    }
+  },
+  26: {
+    tagLabel: "夏夜",
+    tagSentence: "像夏天夜里那杯有气泡的酒，自由，微醺。",
+    keywords: ["自由", "叛逆", "年轻"],
+    analysis: [
+      "爱玩，朋友多。像薄荷莫吉托，冰，气泡，薄荷。",
+      "喜欢自由，不太服管。",
+      "有点叛逆，但不坏。"
+    ],
+    relation: {
+      others: "热闹，好玩。像夏夜露台。",
+      intimate: "需要空间，需要新鲜。不喜欢被绑。",
+      suitable: "适合自由、有趣、能一起玩的人。不适合太控制、太闷的人。"
+    },
+    recipe: {
+      ingredients: ["薄荷叶 8 片", "青柠 半个", "苏打水 150ml", "白朗姆酒 30ml", "冰块 适量", "糖 1 小勺"],
+      steps: ["薄荷叶和糖一起轻捣。", "青柠切块放入。", "加冰块。", "倒入朗姆酒。", "加苏打水，轻搅。"]
+    }
+  },
+  27: {
+    tagLabel: "暖辣",
+    tagSentence: "像冬天里那碗带辣的奶，凶你，但为你好。",
+    keywords: ["强势", "照顾", "傲娇"],
+    analysis: [
+      "嘴硬心软。像姜汁撞奶，热，辣，奶。",
+      "会凶你，但其实是关心。",
+      "不太说好话，但做很多。"
+    ],
+    relation: {
+      others: "有距离，但可靠。像家里最凶的长辈。",
+      intimate: "强势照顾型。不喜欢对方不听话。",
+      suitable: "适合能接住直接、懂 Ta 嘴硬的人。不适合太玻璃心的人。"
+    },
+    recipe: {
+      ingredients: ["姜汁 1 勺", "热牛奶 200ml", "糖 适量"],
+      steps: ["姜榨汁，取 1 勺放碗底。", "牛奶加热到 70—80 度。", "加糖搅匀。", "快速冲入姜汁碗中。", "静置凝固，热食。"]
+    }
+  },
+  28: {
+    tagLabel: "浓郁",
+    tagSentence: "像冬天里一个很深的拥抱，甜苦，厚重。",
+    keywords: ["深情", "占有", "暗色"],
+    analysis: [
+      "深情，厚重。像可可脏脏奶，黑巧，奶。",
+      "外冷内热。喜欢就会很重。",
+      "不太说，但做很多。"
+    ],
+    relation: {
+      others: "有距离，但可靠。像冬天的壁炉。",
+      intimate: "占有欲强，深情。需要对方也认真。",
+      suitable: "适合同样深情、不逃的人。不适合太轻、太飘的人。"
+    },
+    recipe: {
+      ingredients: ["可可粉 2 勺", "黑巧克力 20g", "牛奶 200ml", "淡奶油 50ml", "可可碎 适量"],
+      steps: ["可可粉加少量热水调开。", "黑巧隔水融化。", "牛奶加热，加入可可和黑巧。", "倒入杯中。", "顶部铺奶油，撒可可碎。"]
+    }
+  },
+  29: {
+    tagLabel: "素雅",
+    tagSentence: "像安静陪着你的那杯豆乳，不争，但一直在。",
+    keywords: ["温和", "植物感", "陪伴"],
+    analysis: [
+      "温和，稳定。像豆乳玉麒麟，豆香，茶香。",
+      "不张扬，长期陪伴型。",
+      "是那种朋友以上、恋人未满也会一直在的人。"
+    ],
+    relation: {
+      others: "舒服，安静。像老同桌。",
+      intimate: "慢，稳。不太主动，但不会走。",
+      suitable: "适合安静、稳定、懂陪伴的人。不适合太急、太闹的人。"
+    },
+    recipe: {
+      ingredients: ["豆浆 150ml", "茉莉绿茶 100ml", "黑糖 1 勺", "芋圆 适量"],
+      steps: ["芋圆煮熟。", "杯中加黑糖和芋圆。", "倒入豆浆。", "加入茉莉绿茶。", "轻搅。"]
+    }
+  },
+  30: {
+    tagLabel: "盐系",
+    tagSentence: "像海边那口气泡水，咸甜，干净，有边界。",
+    keywords: ["清爽", "利落", "少年感"],
+    analysis: [
+      "清爽，利落。像海盐柚子苏打，咸甜，气泡。",
+      "不腻，有边界感。",
+      "盐系。"
+    ],
+    relation: {
+      others: "舒服，干净。像夏天海边。",
+      intimate: "不黏，有分寸。需要对方也独立。",
+      suitable: "适合干净、直接、不腻的人。不适合太黏、太油的人。"
+    },
+    recipe: {
+      ingredients: ["柚子汁 40ml", "海盐 一小撮", "苏打水 150ml", "冰块 适量", "蜂蜜 1 小勺"],
+      steps: ["杯中加冰块。", "倒入柚子汁。", "加蜂蜜和海盐。", "加苏打水。", "轻搅。"]
+    }
+  },
+  31: {
+    tagLabel: "夜感",
+    tagSentence: "像深夜酒吧那杯深棕色的酒，烟熏，危险，放松。",
+    keywords: ["成熟", "颓废", "故事感"],
+    analysis: [
+      "有过去，爱喝酒。像烟熏威士忌可乐，深棕，烟熏。",
+      "表面随意，内心复杂。",
+      "适合夜场，也适合一个人。"
+    ],
+    relation: {
+      others: "有趣，但不好定义。像酒吧老板。",
+      intimate: "不轻易开始，开始了就很深。",
+      suitable: "适合成熟、有故事、不逼问的人。不适合太单纯、太急的人。"
+    },
+    recipe: {
+      ingredients: ["威士忌 45ml", "可乐 120ml", "柠檬 1 片", "冰块 适量"],
+      steps: ["杯中加冰块。", "倒入威士忌。", "加可乐。", "放柠檬片。", "轻搅。"]
+    }
+  },
+  32: {
+    tagLabel: "微醺",
+    tagSentence: "像秋天里那碗甜甜的酒酿，软，暖，容易脸红。",
+    keywords: ["甜软", "怀旧", "中式"],
+    analysis: [
+      "温柔，有点迷糊。像桂花酒酿酸奶，甜，软，微醺。",
+      "念旧，容易脸红。",
+      "中式甜妹。"
+    ],
+    relation: {
+      others: "软，甜。像秋天里的一碗甜汤。",
+      intimate: "黏，但可爱。需要被回应。",
+      suitable: "适合温柔、稳定、会照顾人的人。不适合太冷、太凶的人。"
+    },
+    recipe: {
+      ingredients: ["酒酿 2 勺", "酸奶 150g", "桂花 少许", "小圆子 适量"],
+      steps: ["小圆子煮熟。", "杯中加酸奶和酒酿。", "放小圆子。", "撒桂花。", "冷热皆可。"]
+    }
+  },
+  33: {
+    tagLabel: "草本",
+    tagSentence: "像雨后那杯绿色的气泡水，酸，清，不好接近。",
+    keywords: ["文艺", "清冷", "独立"],
+    analysis: [
+      "有审美，不随大流。像柠檬罗勒苏打，酸，绿，草本。",
+      "清爽，但不好接近。",
+      "有距离感。"
+    ],
+    relation: {
+      others: "舒服，但不太热。像文艺小店。",
+      intimate: "慢，深。需要懂的人。",
+      suitable: "适合有审美、安静、不吵的人。不适合太俗、太闹的人。"
+    },
+    recipe: {
+      ingredients: ["柠檬 半个", "罗勒叶 6 片", "苏打水 150ml", "糖浆 1 小勺", "冰块 适量"],
+      steps: ["柠檬榨汁。", "罗勒叶轻拍。", "杯中加冰块、柠檬汁、糖浆。", "加苏打水。", "放罗勒叶。"]
+    }
+  },
+  34: {
+    tagLabel: "沉稳",
+    tagSentence: "像老房子里那杯黑芝麻豆乳，暗，厚，可靠。",
+    keywords: ["老派", "守护", "厚重"],
+    analysis: [
+      "成熟，稳重，话少。像黑芝麻豆乳，黑，厚。",
+      "可靠，守护型。",
+      "不太解释，但一直在。"
+    ],
+    relation: {
+      others: "安心，稳。像长辈。",
+      intimate: "不黏，不哄。但会一直在。",
+      suitable: "适合成熟、稳定、懂珍惜的人。不适合太闹、太飘的人。"
+    },
+    recipe: {
+      ingredients: ["黑芝麻 2 勺", "豆浆 180ml", "牛奶 80ml", "黑糖 1 小勺"],
+      steps: ["黑芝麻炒香。", "和豆浆、牛奶一起打。", "加热。", "加黑糖。", "热饮。"]
+    }
+  },
+  35: {
+    tagLabel: "清冷",
+    tagSentence: "像酸苦的回忆，清醒，独立，有故事。",
+    keywords: ["成熟", "酸苦", "距离"],
+    analysis: [
+      "清醒，独立。像西柚迷迭香冰茶，酸，苦，草本。",
+      "有故事，不好骗。",
+      "冷感。"
+    ],
+    relation: {
+      others: "有距离，但有味道。像前任。",
+      intimate: "慢，深。需要对方也清醒。",
+      suitable: "适合成熟、独立、有分寸的人。不适合太幼稚、太黏的人。"
+    },
+    recipe: {
+      ingredients: ["西柚 半个", "迷迭香 1 枝", "红茶 150ml", "蜂蜜 1 小勺", "冰块 适量"],
+      steps: ["西柚榨汁，留一片装饰。", "红茶泡好放凉。", "杯中加冰块和西柚汁。", "倒入红茶。", "放迷迭香，加蜂蜜。"]
+    }
+  },
+  36: {
+    tagLabel: "软甜",
+    tagSentence: "像冬天被窝里那杯热可可，甜，软，没有攻击性。",
+    keywords: ["童年", "治愈", "团宠"],
+    analysis: [
+      "软，甜。像棉花糖热可可，热，奶，甜。",
+      "需要被保护。",
+      "天真，无攻击性。"
+    ],
+    relation: {
+      others: "舒服，可爱。像弟弟妹妹。",
+      intimate: "黏，甜。需要被哄。",
+      suitable: "适合温柔、会照顾人的人。不适合太冷、太凶的人。"
+    },
+    recipe: {
+      ingredients: ["可可粉 2 勺", "牛奶 200ml", "棉花糖 5 颗", "淡奶油 30ml"],
+      steps: ["可可粉加少量热水调开。", "牛奶加热，加入可可。", "倒入杯中。", "顶部放棉花糖。", "挤一点奶油，热饮。"]
+    }
+  },
+  37: {
+    tagLabel: "热带",
+    tagSentence: "像夏天最酸的那口气，热闹，有嚼劲。",
+    keywords: ["外向", "活力", "高酸"],
+    analysis: [
+      "话多，爱笑。像百香果双响炮，酸，热带，有珍珠。",
+      "行动力强，喜欢新鲜。",
+      "热闹。"
+    ],
+    relation: {
+      others: "好玩，热闹。像聚会中心。",
+      intimate: "热情，需要新鲜感。不喜欢无聊。",
+      suitable: "适合同样爱玩、有活力的人。不适合太闷、太慢的人。"
+    },
+    recipe: {
+      ingredients: ["百香果 2 个", "珍珠 适量", "椰果 适量", "绿茶 150ml", "蜂蜜 1 勺", "冰块 适量"],
+      steps: ["百香果挖出果肉。", "杯中加冰块、珍珠、椰果。", "倒入绿茶。", "加百香果和蜂蜜。", "搅匀。"]
+    }
+  },
+  38: {
+    tagLabel: "台式",
+    tagSentence: "像放学路上那杯黑糖珍珠，甜，黏，接地气。",
+    keywords: ["邻家", "日常", "治愈"],
+    analysis: [
+      "亲切，随和。像黑糖珍珠鲜奶，黑糖，珍珠，奶。",
+      "爱美食，有点黏人。",
+      "闺蜜型。"
+    ],
+    relation: {
+      others: "舒服，亲切。像老同学。",
+      intimate: "黏，甜。需要回应。",
+      suitable: "适合温柔、稳定、愿意陪 Ta 的人。不适合太冷、太忙的人。"
+    },
+    recipe: {
+      ingredients: ["黑糖 2 勺", "珍珠 适量", "鲜奶 200ml"],
+      steps: ["珍珠煮熟，拌黑糖。", "杯中放黑糖珍珠，转出挂壁。", "倒入鲜奶。", "冷热皆可。"]
+    }
+  },
+  39: {
+    tagLabel: "天然",
+    tagSentence: "像海边那口透明的水，简单，干净，不刻意。",
+    keywords: ["盐系", "自然", "简单"],
+    analysis: [
+      "简单，干净。像椰子水，透明，清甜。",
+      "不复杂，不装。",
+      "随性。"
+    ],
+    relation: {
+      others: "舒服，轻松。像海边。",
+      intimate: "不黏，不猜。喜欢就一起。",
+      suitable: "适合简单、自然、不复杂的人。不适合太戏、太黏的人。"
+    },
+    recipe: {
+      ingredients: ["椰子水 250ml", "冰块 适量"],
+      steps: ["杯中加冰块。", "倒入椰子水。", "完成。"]
+    }
+  },
+  40: {
+    tagLabel: "特别",
+    tagSentence: "像夏天那杯咸鲜的冰茶，酸，怪，但记得住。",
+    keywords: ["小众", "记忆点", "清爽"],
+    analysis: [
+      "特别，有自己口味。像番茄梅子冰茶，咸鲜，酸。",
+      "不随大流。",
+      "怪但迷人。"
+    ],
+    relation: {
+      others: "有趣，特别。像小众咖啡馆。",
+      intimate: "慢，但认真。需要懂的人。",
+      suitable: "适合有品味、不随大流的人。不适合太普通、太规矩的人。"
+    },
+    recipe: {
+      ingredients: ["小番茄 6 颗", "话梅 3 颗", "绿茶 150ml", "冰糖 适量", "冰块 适量"],
+      steps: ["小番茄对半切。", "杯中加冰块、番茄、话梅。", "倒入绿茶。", "加冰糖。", "泡 3 分钟。"]
+    }
+  },
+  41: {
+    tagLabel: "反差",
+    tagSentence: "像冬天里那杯绿棕色的奶昔，冷，甜，有点怪。",
+    keywords: ["反差萌", "冷甜", "特别"],
+    analysis: [
+      "有反差，表面冷内心甜。像薄荷巧克力奶昔，绿棕，清凉。",
+      "有点古怪。",
+      "特别。"
+    ],
+    relation: {
+      others: "有趣，特别。像冬天里的一颗薄荷糖。",
+      intimate: "慢热，但甜。需要对方接得住怪。",
+      suitable: "适合有趣、包容、不刻板的人。不适合太正常、太规矩的人。"
+    },
+    recipe: {
+      ingredients: ["薄荷糖浆 15ml", "巧克力冰淇淋 2 球", "牛奶 120ml", "冰块 适量"],
+      steps: ["所有材料放入搅拌机。", "打至顺滑。", "倒入杯中。", "冷饮。"]
+    }
+  },
+  42: {
+    tagLabel: "温润",
+    tagSentence: "像安静书房里那杯杏仁奶，温，润，不张扬。",
+    keywords: ["绅士", "安静", "有质感"],
+    analysis: [
+      "温和，稳重。像杏仁奶，奶白，坚果香。",
+      "有教养，不吵。",
+      "成熟。"
+    ],
+    relation: {
+      others: "舒服，安静。像老朋友。",
+      intimate: "慢，稳。不轻易开始，开始了就很认真。",
+      suitable: "适合成熟、安静、有分寸的人。不适合太吵、太急的人。"
+    },
+    recipe: {
+      ingredients: ["杏仁 30g", "牛奶 200ml", "糖 适量"],
+      steps: ["杏仁泡软。", "和牛奶一起打。", "过滤。", "加热，加糖。", "热饮。"]
+    }
+  },
+  43: {
+    tagLabel: "清冷",
+    tagSentence: "像深红色的玫瑰，美，酸，有故事，不好接近。",
+    keywords: ["浪漫", "古典", "距离"],
+    analysis: [
+      "美，冷。像洛神玫瑰饮，深红，酸，花香。",
+      "有故事，不好接近。",
+      "红玫瑰型。"
+    ],
+    relation: {
+      others: "有距离，但让人记住。像前任。",
+      intimate: "深，慢。不轻易开始。",
+      suitable: "适合成熟、有耐心、懂浪漫的人。不适合太幼稚、太急的人。"
+    },
+    recipe: {
+      ingredients: ["洛神花 3 朵", "玫瑰花 5 朵", "冰糖 适量", "水 250ml"],
+      steps: ["材料洗净。", "放入杯中。", "加温水或热水。", "泡 5 分钟。", "加冰糖。"]
+    }
+  },
+  44: {
+    tagLabel: "辛辣",
+    tagSentence: "像夏天那口气泡水，冲，辣，直接。",
+    keywords: ["直率", "火爆", "元气"],
+    analysis: [
+      "直接，嘴快。像姜汁汽水，辣，气泡。",
+      "行动派，有点冲。",
+      "但没坏心。"
+    ],
+    relation: {
+      others: "热闹，直接。像夏天球场。",
+      intimate: "不猜，不藏。喜欢就说。",
+      suitable: "适合同样直接、有活力的人。不适合太闷、太爱猜的人。"
+    },
+    recipe: {
+      ingredients: ["姜汁 20ml", "苏打水 150ml", "柠檬 1 片", "糖 1 小勺", "冰块 适量"],
+      steps: ["杯中加冰块、姜汁、糖。", "加苏打水。", "放柠檬片。", "轻搅。"]
+    }
+  },
+  45: {
+    tagLabel: "现代",
+    tagSentence: "像都市夜里那杯气泡咖啡，苦，醒，独立。",
+    keywords: ["精英", "独立", "冷感"],
+    analysis: [
+      "理性，清醒。像咖啡汤力，苦，气泡。",
+      "边界感强。",
+      "冷感。"
+    ],
+    relation: {
+      others: "有距离，但可靠。像办公室里最厉害的人。",
+      intimate: "不黏，不哄。需要对方也独立。",
+      suitable: "适合成熟、独立、不黏人的人。不适合太需要情绪价值的人。"
+    },
+    recipe: {
+      ingredients: ["浓缩咖啡 1 份", "汤力水 150ml", "冰块 适量", "柠檬 1 片"],
+      steps: ["杯中加冰块。", "倒入汤力水。", "缓缓加浓缩咖啡。", "放柠檬片。"]
+    }
+  },
+  46: {
+    tagLabel: "微醺",
+    tagSentence: "像中秋夜那碗甜酒，米香，暖，容易脸红。",
+    keywords: ["中式", "怀旧", "温柔"],
+    analysis: [
+      "温柔，念旧。像米酿甜酒，米香，桂花，微醺。",
+      "容易脸红。",
+      "中式甜妹。"
+    ],
+    relation: {
+      others: "软，暖。像家里的一碗甜汤。",
+      intimate: "黏，甜。需要被照顾。",
+      suitable: "适合温柔、稳定、会照顾人的人。不适合太冷、太凶的人。"
+    },
+    recipe: {
+      ingredients: ["米酒 100ml", "酒酿 2 勺", "桂花 少许", "小圆子 适量", "冰糖 适量"],
+      steps: ["小圆子煮熟。", "米酒和酒酿加热。", "加小圆子和冰糖。", "撒桂花。", "热饮。"]
+    }
+  },
+  47: {
+    tagLabel: "猎奇",
+    tagSentence: "像一本翻到一半就合上的旧书，看不懂，但放不下。",
+    keywords: ["高级", "神秘", "复杂"],
+    analysis: [
+      "不是第一眼就会喜欢的人。更像黑松露蜂蜜拿铁，听起来奇怪，喝下去更奇怪，但就是忘不掉。",
+      "有品味，有距离，不太按常理出牌。别人觉得没必要的事，这人偏偏很认真。",
+      "不是故意神秘。只是很多感受说出来就变味了，所以干脆不说。",
+      "越靠近越发现，这人身上有很多层。每一层都不太一样，但都是真的。"
+    ],
+    relation: {
+      others: "好奇，但不敢随便靠近。像那种站在人群里，却像在另一个世界的人。",
+      intimate: "要么不开始，要么很深。不太会表达，但会用行动把在意写得很清楚。",
+      suitable: "适合有耐心、不急着定义、能欣赏奇怪的人。不适合太正常、太规矩、太需要答案的人。"
+    },
+    recipe: {
+      ingredients: ["浓缩咖啡 1 份", "牛奶 150ml", "黑松露糖浆 5ml", "蜂蜜 1 小勺"],
+      steps: ["杯中加蜂蜜和黑松露糖浆。", "倒入浓缩咖啡，搅匀。", "牛奶加热打发，缓缓倒入。", "表面可拉一个简单的花纹。", "热饮，不要搅太狠。"]
+    }
+  },
+  48: {
+    tagLabel: "浪漫",
+    tagSentence: "像夏天那杯粉色的气泡水，甜，梦幻，轻盈。",
+    keywords: ["甜妹", "浪漫", "梦幻"],
+    analysis: [
+      "浪漫，爱美。像玫瑰荔枝气泡水，粉，气泡，花香。",
+      "梦幻，有点小公主。",
+      "轻盈。"
+    ],
+    relation: {
+      others: "甜，可爱。像夏天里的花。",
+      intimate: "黏，甜。需要被宠。",
+      suitable: "适合温柔、会宠人的人。不适合太冷、太凶的人。"
+    },
+    recipe: {
+      ingredients: ["荔枝 6 颗", "玫瑰糖浆 15ml", "苏打水 150ml", "冰块 适量"],
+      steps: ["荔枝去壳。", "杯中加冰块和荔枝。", "加玫瑰糖浆。", "倒入苏打水。", "轻搅。"]
+    }
+  }
+};
+
+/* ============================================================
+   匹配算法 + 隐藏触发 + 答题逻辑
+   ============================================================ */
+
+const ALL_KEYS = [
+  "cold", "hot", "sweet", "sour", "bitter", "sparkling",
+  "creamy", "alcohol", "tea", "coffee", "fruity", "floral",
+  "refreshing", "thick", "bright", "dark", "soft", "complex",
+  "simple", "spice", "mature", "exotic", "premium", "distance"
+];
+
+let currentQuestionIndex = 0;
+const userAnswers = {};
+let ocName = "";
+
+function computeUserVector() {
+  const vec = {};
+  ALL_KEYS.forEach(k => vec[k] = 0);
+  questions.forEach(q => {
+    const ansIdx = userAnswers[q.id];
+    if (ansIdx === undefined) return;
+    const opt = q.options[ansIdx];
+    if (!opt || !opt.score) return;
+    for (const key in opt.score) {
+      if (vec[key] === undefined) vec[key] = 0;
+      vec[key] += opt.score[key];
+    }
+  });
+  return vec;
+}
+
+function cosineSimilarity(vecA, vecB) {
+  let dot = 0, magA = 0, magB = 0;
+  const keys = new Set([...Object.keys(vecA), ...Object.keys(vecB)]);
+  keys.forEach(k => {
+    const a = vecA[k] || 0;
+    const b = vecB[k] || 0;
+    dot += a * b;
+    magA += a * a;
+    magB += b * b;
+  });
+  if (magA === 0 || magB === 0) return 0;
+  return dot / (Math.sqrt(magA) * Math.sqrt(magB));
+}
+
+function checkHiddenTriggers(userVec) {
+  let wineScore = 0;
+  let truffleScore = 0;
+  questions.forEach(q => {
+    const ansIdx = userAnswers[q.id];
+    if (ansIdx === undefined) return;
+    const opt = q.options[ansIdx];
+    if (!opt || !opt.hidden) return;
+    if (opt.hidden.wine) wineScore += opt.hidden.wine;
+    if (opt.hidden.truffle) truffleScore += opt.hidden.truffle;
+  });
+  const alcoholHigh = (userVec.alcohol || 0) >= 3;
+  const spiceHigh = (userVec.spice || 0) >= 3;
+  const matureHigh = (userVec.mature || 0) >= 3;
+  const complexHigh = (userVec.complex || 0) >= 5;
+  const exoticHigh = (userVec.exotic || 0) >= 4;
+  const premiumHigh = (userVec.premium || 0) >= 3;
+  const wineTriggered = wineScore >= 1 && alcoholHigh && spiceHigh && matureHigh;
+  const truffleTriggered = truffleScore >= 1 && complexHigh && exoticHigh && premiumHigh;
+  return { wineTriggered, truffleTriggered };
+}
+
+function matchDrink(userVec) {
+  const normalDrinks = drinks.filter(d => !d.hidden);
+  let best = null;
+  let bestScore = -Infinity;
+  const ranked = [];
+  normalDrinks.forEach(d => {
+    const sim = cosineSimilarity(userVec, d.score);
+    ranked.push({ drink: d, sim });
+    if (sim > bestScore) { bestScore = sim; best = d; }
+  });
+  ranked.sort((a, b) => b.sim - a.sim);
+  return { best, ranked };
+}
+
+function displayMatchScore(sim) {
+  let base = 80 + sim * 15;
+  base = Math.max(80, Math.min(95, base));
+  const jitter = (Math.random() * 6) - 3;
+  let final = Math.round(base + jitter);
+  final = Math.max(76, Math.min(98, final));
+  return final;
+}
+
+function displayRarePercent() {
+  const val = (Math.random() * 2.5 + 0.5).toFixed(1);
+  return `＜${val}%`;
+}
+
+function getSimilarDrinks(ranked, currentDrink, isHidden) {
+  const count = isHidden ? 3 : 6;
+  return ranked
+    .filter(r => r.drink.id !== currentDrink.id)
+    .slice(0, count)
+    .map(r => r.drink);
+}
+
+function generateResult() {
+  const userVec = computeUserVector();
+  const { wineTriggered, truffleTriggered } = checkHiddenTriggers(userVec);
+  let resultDrink = null;
+  let isHidden = false;
+
+  if (wineTriggered && truffleTriggered) {
+    const pick = Math.random() < 0.5 ? 22 : 47;
+    resultDrink = drinks.find(d => d.id === pick);
+    isHidden = true;
+  } else if (wineTriggered) {
+    resultDrink = drinks.find(d => d.id === 22);
+    isHidden = true;
+  } else if (truffleTriggered) {
+    resultDrink = drinks.find(d => d.id === 47);
+    isHidden = true;
+  } else {
+    const { best, ranked } = matchDrink(userVec);
+    resultDrink = best;
+    isHidden = false;
+    const similar = getSimilarDrinks(ranked, resultDrink, false);
+    return { drink: resultDrink, isHidden: false, matchScore: displayMatchScore(ranked[0].sim), similar };
+  }
+
+  const { ranked } = matchDrink(userVec);
+  const similar = getSimilarDrinks(ranked, resultDrink, true);
+  return { drink: resultDrink, isHidden: true, rarePercent: displayRarePercent(), similar };
+}
+
+function renderQuestion() {
+  const q = questions[currentQuestionIndex];
+  document.getElementById("quizCounter").textContent = `第 ${currentQuestionIndex + 1} / ${questions.length} 题`;
+  document.getElementById("quizGroupName").textContent = q.groupName;
+  document.getElementById("quizQuestion").textContent = q.text;
+  document.getElementById("quizProgressFill").style.width = ((currentQuestionIndex) / questions.length) * 100 + "%";
+
+  const optionsEl = document.getElementById("quizOptions");
+  optionsEl.innerHTML = "";
+  q.options.forEach((opt, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "option-btn";
+    if (userAnswers[q.id] === idx) btn.classList.add("selected");
+    btn.innerHTML = `<span class="option-index">${idx + 1}</span><span class="option-text">${opt.text}</span>`;
+    btn.addEventListener("click", () => selectOption(q.id, idx));
+    optionsEl.appendChild(btn);
+  });
+
+  document.getElementById("prevBtn").disabled = currentQuestionIndex === 0;
+  document.getElementById("nextBtn").disabled = userAnswers[q.id] === undefined;
+  applyQuizGroupColor(q.group);
+}
+
+function selectOption(qId, optIdx) {
+  userAnswers[qId] = optIdx;
+  const buttons = document.querySelectorAll("#quizOptions .option-btn");
+  buttons.forEach((b, i) => b.classList.toggle("selected", i === optIdx));
+  document.getElementById("nextBtn").disabled = false;
+  setTimeout(() => {
+    if (currentQuestionIndex < questions.length - 1) {
+      currentQuestionIndex++;
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  }, 400);
+}
+
+function goPrev() {
+  if (currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(); }
+}
+
+function goNext() {
+  const q = questions[currentQuestionIndex];
+  if (userAnswers[q.id] === undefined) return;
+  if (currentQuestionIndex < questions.length - 1) {
+    currentQuestionIndex++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function applyQuizGroupColor(group) {
+  const colors = { A: "#1a1f2e", B: "#1f1a2e", C: "#1a2e24", D: "#2e1a1a", E: "#2a1a2e", F: "#1a2a2e" };
+  document.getElementById("pageQuiz").style.background = colors[group] || "#111";
+}
+
+/* ============================================================
+   结果页渲染 + 像素图 SVG + 底部滚动
+   ============================================================ */
+
+function buildPixelSVG(drink, size = 120) {
+  const main = drink.mainColor || "#888";
+  const sub = drink.subColor || "#ccc";
+  const cup = drink.cup || "tall";
+  const topping = drink.topping || "none";
+  const layers = drink.layers || 1;
+  const mood = drink.mood || "light";
+
+  let cupW, cupH, cupX, cupY, liquidTop;
+  if (cup === "mug") { cupW = 60; cupH = 56; cupX = 30; cupY = 40; liquidTop = 56; }
+  else if (cup === "short") { cupW = 56; cupH = 40; cupX = 32; cupY = 56; liquidTop = 68; }
+  else if (cup === "cup") { cupW = 54; cupH = 46; cupX = 33; cupY = 50; liquidTop = 62; }
+  else { cupW = 52; cupH = 70; cupX = 34; cupY = 30; liquidTop = 42; }
+
+  const liquidH = cupY + cupH - liquidTop;
+  const liquidY = liquidTop;
+
+  let liquidRects = "";
+  if (layers >= 3) {
+    const partH = liquidH / 3;
+    liquidRects += `<rect x="${cupX+2}" y="${liquidY}" width="${cupW-4}" height="${partH}" fill="${sub}" opacity="0.85"/>`;
+    liquidRects += `<rect x="${cupX+2}" y="${liquidY+partH}" width="${cupW-4}" height="${partH}" fill="${main}" opacity="0.85"/>`;
+    liquidRects += `<rect x="${cupX+2}" y="${liquidY+partH*2}" width="${cupW-4}" height="${partH}" fill="${sub}" opacity="0.7"/>`;
+  } else if (layers === 2) {
+    const partH = liquidH / 2;
+    liquidRects += `<rect x="${cupX+2}" y="${liquidY}" width="${cupW-4}" height="${partH}" fill="${sub}" opacity="0.85"/>`;
+    liquidRects += `<rect x="${cupX+2}" y="${liquidY+partH}" width="${cupW-4}" height="${partH}" fill="${main}" opacity="0.85"/>`;
+  } else {
+    liquidRects += `<rect x="${cupX+2}" y="${liquidY}" width="${cupW-4}" height="${liquidH}" fill="${main}" opacity="0.85"/>`;
+  }
+
+  let iceRects = "";
+  if (drink.mood !== "warm" && drink.id !== 22 && drink.id !== 36 && drink.id !== 27 && drink.id !== 34 && drink.id !== 42 && drink.id !== 46) {
+    iceRects += `<rect x="${cupX+8}" y="${liquidY+8}" width="10" height="10" fill="#fff" opacity="0.28"/>`;
+    iceRects += `<rect x="${cupX+cupW-18}" y="${liquidY+16}" width="10" height="10" fill="#fff" opacity="0.22"/>`;
+    iceRects += `<rect x="${cupX+14}" y="${liquidY+liquidH-18}" width="10" height="10" fill="#fff" opacity="0.2"/>`;
+  }
+
+  let straw = "";
+  if (cup === "tall" || cup === "short") {
+    straw = `<rect x="${cupX+cupW-12}" y="${cupY-14}" width="4" height="26" fill="${sub}" opacity="0.9"/>`;
+  }
+
+  let topDeco = "";
+  if (topping === "cream") {
+    topDeco = `<rect x="${cupX+8}" y="${cupY-10}" width="${cupW-16}" height="8" fill="#fff" opacity="0.85"/><rect x="${cupX+14}" y="${cupY-16}" width="${cupW-28}" height="6" fill="#fff" opacity="0.7"/>`;
+  } else if (topping === "flower") {
+    topDeco = `<rect x="${cupX+cupW/2-4}" y="${cupY-8}" width="8" height="4" fill="${sub}"/><rect x="${cupX+cupW/2-2}" y="${cupY-12}" width="4" height="4" fill="${main}"/>`;
+  } else if (topping === "mint") {
+    topDeco = `<rect x="${cupX+cupW/2-6}" y="${cupY-8}" width="6" height="4" fill="#4a7c4e"/><rect x="${cupX+cupW/2}" y="${cupY-10}" width="6" height="4" fill="#4a7c4e"/>`;
+  } else if (topping === "pearl") {
+    topDeco = `<rect x="${cupX+10}" y="${liquidY+liquidH-6}" width="6" height="6" fill="#3b2314" opacity="0.9"/><rect x="${cupX+20}" y="${liquidY+liquidH-4}" width="6" height="6" fill="#3b2314" opacity="0.85"/><rect x="${cupX+30}" y="${liquidY+liquidH-7}" width="6" height="6" fill="#3b2314" opacity="0.9"/>`;
+  } else if (topping === "marshmallow") {
+    topDeco = `<rect x="${cupX+10}" y="${cupY-8}" width="10" height="8" fill="#fff" opacity="0.9"/><rect x="${cupX+24}" y="${cupY-8}" width="10" height="8" fill="#fff" opacity="0.85"/>`;
+  } else if (topping === "spice") {
+    topDeco = `<rect x="${cupX+cupW/2-2}" y="${cupY-6}" width="4" height="4" fill="#8b5a2b"/><rect x="${cupX+cupW/2+6}" y="${cupY-8}" width="4" height="4" fill="#8b5a2b"/>`;
+  } else if (topping === "herb") {
+    topDeco = `<rect x="${cupX+cupW/2-6}" y="${cupY-6}" width="4" height="6" fill="#4a7c4e"/><rect x="${cupX+cupW/2+2}" y="${cupY-8}" width="4" height="6" fill="#4a7c4e"/>`;
+  }
+
+  let steam = "";
+  if (mood === "warm" || cup === "mug" || cup === "cup") {
+    steam = `<rect x="${cupX+14}" y="${cupY-22}" width="3" height="10" fill="#fff" opacity="0.35"><animate attributeName="y" values="${cupY-22};${cupY-30};${cupY-22}" dur="2.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.35;0.1;0.35" dur="2.6s" repeatCount="indefinite"/></rect><rect x="${cupX+cupW-20}" y="${cupY-24}" width="3" height="10" fill="#fff" opacity="0.28"><animate attributeName="y" values="${cupY-24};${cupY-32};${cupY-24}" dur="3.1s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.28;0.08;0.28" dur="3.1s" repeatCount="indefinite"/></rect>`;
+  }
+
+  let bubbles = "";
+  if (drink.score && drink.score.sparkling > 1) {
+    bubbles = `<rect x="${cupX+10}" y="${liquidY+liquidH-14}" width="3" height="3" fill="#fff" opacity="0.6"><animate attributeName="y" values="${liquidY+liquidH-14};${liquidY+6};${liquidY+liquidH-14}" dur="3.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.6;0;0.6" dur="3.4s" repeatCount="indefinite"/></rect><rect x="${cupX+26}" y="${liquidY+liquidH-20}" width="3" height="3" fill="#fff" opacity="0.5"><animate attributeName="y" values="${liquidY+liquidH-20};${liquidY+10};${liquidY+liquidH-20}" dur="4.1s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.5;0;0.5" dur="4.1s" repeatCount="indefinite"/></rect><rect x="${cupX+cupW-16}" y="${liquidY+liquidH-16}" width="3" height="3" fill="#fff" opacity="0.55"><animate attributeName="y" values="${liquidY+liquidH-16};${liquidY+8};${liquidY+liquidH-16}" dur="3.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.55;0;0.55" dur="3.8s" repeatCount="indefinite"/></rect>`;
+  }
+
+  return `<svg viewBox="0 0 120 120" width="${size}" height="${size}" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">${steam}${straw}<rect x="${cupX}" y="${cupY}" width="${cupW}" height="${cupH}" fill="none" stroke="${main}" stroke-width="2"/>${liquidRects}${iceRects}${topDeco}${bubbles}<rect x="${cupX-4}" y="${cupY+cupH}" width="${cupW+8}" height="3" fill="${main}" opacity="0.6"/></svg>`;
+}
+
+function renderResult(result) {
+  const { drink, isHidden, matchScore, rarePercent, similar } = result;
+  const text = drinkTexts[drink.id];
+  const displayName = ocName ? ocName : "你的 OC";
+
+  document.getElementById("resultTitle").textContent = `${displayName} 的印象饮品——${drink.name}`;
+
+  const rareWrap = document.getElementById("resultRareTagWrap");
+  if (isHidden) {
+    rareWrap.innerHTML = `<div style="text-align:center;margin-bottom:14px;"><span class="result-rare-tag">隐藏款</span></div>`;
+  } else {
+    rareWrap.innerHTML = "";
+  }
+
+  document.getElementById("resultPixelWrap").innerHTML = buildPixelSVG(drink, 120);
+
+  const scoreEl = document.getElementById("resultScore");
+  if (isHidden) {
+    scoreEl.textContent = `稀有度 ${rarePercent}`;
+  } else {
+    scoreEl.textContent = `匹配度 ${matchScore}%`;
+  }
+
+  document.getElementById("resultTagline").innerHTML = `<div class="tag-label">${text.tagLabel}</div><div class="tag-sentence">${text.tagSentence}</div>`;
+  document.getElementById("resultKeywords").innerHTML = text.keywords.map(k => `<span class="keyword-chip">${k}</span>`).join("");
+  document.getElementById("analysisText").innerHTML = text.analysis.map(p => `<p>${p}</p>`).join("");
+
+  document.getElementById("relationText").innerHTML = `
+    <div class="relation-block"><span class="relation-label">别人和 Ta 相处时</span><p>${text.relation.others}</p></div>
+    <div class="relation-block"><span class="relation-label">在亲密关系里</span><p>${text.relation.intimate}</p></div>
+    <div class="relation-block"><span class="relation-label">适合什么样的人</span><p>${text.relation.suitable}</p></div>
+  `;
+
+  document.getElementById("recipeText").innerHTML = `
+    <div class="recipe-sub-title">原料</div>
+    <ul class="recipe-ingredients">${text.recipe.ingredients.map(i => `<li>${i}</li>`).join("")}</ul>
+    <div class="recipe-sub-title">步骤</div>
+    <ol class="recipe-steps">${text.recipe.steps.map((s, i) => `<li data-step="${i + 1}.">${s}</li>`).join("")}</ol>
+  `;
+
+  const track = document.getElementById("similarTrack");
+  const loopList = [...similar, ...similar];
+  track.innerHTML = loopList.map(d => `<div class="similar-item">${buildPixelSVG(d, 64)}<div class="similar-name">${d.name}</div></div>`).join("");
+
+  const particles = document.getElementById("rareParticles");
+  if (isHidden) {
+    particles.classList.add("active");
+    particles.innerHTML = "";
+    for (let i = 0; i < 40; i++) {
+      const p = document.createElement("div");
+      p.className = "rare-particle";
+      p.style.left = Math.random() * 100 + "%";
+      p.style.top = Math.random() * 100 + "%";
+      p.style.animationDuration = (3 + Math.random() * 5) + "s";
+      p.style.animationDelay = (Math.random() * 3) + "s";
+      particles.appendChild(p);
+    }
+  } else {
+    particles.classList.remove("active");
+    particles.innerHTML = "";
+  }
+
+  document.getElementById("pageResult").style.background = isHidden ? "#0d0d0d" : "transparent";
+}
+
+function showResult() {
+  const result = generateResult();
+  renderResult(result);
+  document.getElementById("pageQuiz").classList.remove("active");
+  document.getElementById("pageResult").classList.add("active");
+  window.scrollTo(0, 0);
+
+  const scrollEl = document.getElementById("similarScroll");
+  const track = document.getElementById("similarTrack");
+  scrollEl.addEventListener("touchstart", () => { track.style.animationPlayState = "paused"; });
+  scrollEl.addEventListener("touchend", () => { track.style.animationPlayState = "running"; });
+  scrollEl.addEventListener("mouseenter", () => { track.style.animationPlayState = "paused"; });
+  scrollEl.addEventListener("mouseleave", () => { track.style.animationPlayState = "running"; });
+}
+
+/* ============================================================
+   页面切换 + 事件绑定 + 初始化
+   ============================================================ */
+
+function showPage(pageId) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(pageId).classList.add("active");
+  window.scrollTo(0, 0);
+}
+
+function startQuiz() {
+  const input = document.getElementById("ocNameInput");
+  ocName = (input.value || "").trim().slice(0, 8);
+  currentQuestionIndex = 0;
+  Object.keys(userAnswers).forEach(k => delete userAnswers[k]);
+  document.getElementById("rareParticles").classList.remove("active");
+  document.getElementById("rareParticles").innerHTML = "";
+  showPage("pageQuiz");
+  renderQuestion();
+}
+
+function restart() {
+  currentQuestionIndex = 0;
+  Object.keys(userAnswers).forEach(k => delete userAnswers[k]);
+  document.getElementById("ocNameInput").value = "";
+  ocName = "";
+  document.getElementById("rareParticles").classList.remove("active");
+  document.getElementById("rareParticles").innerHTML = "";
+  document.getElementById("resultRareTagWrap").innerHTML = "";
+  document.getElementById("resultTitle").textContent = "";
+  document.getElementById("resultPixelWrap").innerHTML = "";
+  document.getElementById("resultScore").textContent = "";
+  document.getElementById("resultTagline").innerHTML = "";
+  document.getElementById("resultKeywords").innerHTML = "";
+  document.getElementById("analysisText").innerHTML = "";
+  document.getElementById("relationText").innerHTML = "";
+  document.getElementById("recipeText").innerHTML = "";
+  document.getElementById("similarTrack").innerHTML = "";
+  showPage("pageHome");
+}
+
+document.getElementById("startBtn").addEventListener("click", startQuiz);
+document.getElementById("restartBtn").addEventListener("click", restart);
+document.getElementById("prevBtn").addEventListener("click", goPrev);
+document.getElementById("nextBtn").addEventListener("click", goNext);
+
+document.getElementById("ocNameInput").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") startQuiz();
+});
+
+(function init() {
+  showPage("pageHome");
+  const startBtn = document.getElementById("startBtn");
+  startBtn.addEventListener("touchstart", () => { startBtn.style.transform = "scale(0.97)"; });
+  startBtn.addEventListener("touchend", () => { startBtn.style.transform = "scale(1)"; });
+})();
+
+</script>
+</body>
+</html>
