@@ -1454,6 +1454,7 @@ function cosineSimilarity(vecA, vecB) {
 function checkHiddenTriggers(userVec) {
   let wineScore = 0;
   let truffleScore = 0;
+
   questions.forEach(q => {
     const ansIdx = userAnswers[q.id];
     if (ansIdx === undefined) return;
@@ -1462,17 +1463,32 @@ function checkHiddenTriggers(userVec) {
     if (opt.hidden.wine) wineScore += opt.hidden.wine;
     if (opt.hidden.truffle) truffleScore += opt.hidden.truffle;
   });
-  const alcoholHigh = (userVec.alcohol || 0) >= 3;
-  const spiceHigh = (userVec.spice || 0) >= 3;
-  const matureHigh = (userVec.mature || 0) >= 3;
-  const complexHigh = (userVec.complex || 0) >= 5;
-  const exoticHigh = (userVec.exotic || 0) >= 4;
-  const premiumHigh = (userVec.premium || 0) >= 3;
-  const wineTriggered = wineScore >= 1 && alcoholHigh && spiceHigh && matureHigh;
-  const truffleTriggered = truffleScore >= 1 && complexHigh && exoticHigh && premiumHigh;
+
+  const q21 = userAnswers[21];
+  const q22 = userAnswers[22];
+  const q21B = q21 === 1;
+  const q21D = q21 === 3;
+  const q22C = q22 === 2;
+  const q22D = q22 === 3;
+
+  const alcoholHigh = (userVec.alcohol || 0) >= 5;
+  const spiceHigh = (userVec.spice || 0) >= 5;
+  const matureHigh = (userVec.mature || 0) >= 5;
+  const complexHigh = (userVec.complex || 0) >= 8;
+  const exoticHigh = (userVec.exotic || 0) >= 6;
+  const premiumHigh = (userVec.premium || 0) >= 6;
+
+  const wineCondition =
+    q21B && q22D && alcoholHigh && spiceHigh && matureHigh;
+
+  const truffleCondition =
+    q21D && (q22C || q22D) && complexHigh && exoticHigh && premiumHigh;
+
+  const wineTriggered = wineCondition && Math.random() < 0.10;
+  const truffleTriggered = truffleCondition && Math.random() < 0.10;
+
   return { wineTriggered, truffleTriggered };
 }
-
 /* ---------- 普通匹配：返回全部排名 ---------- */
 function matchAllNormal(userVec) {
   const normalDrinks = drinks.filter(d => !d.hidden);
@@ -1534,16 +1550,20 @@ function generateResult() {
   let isHidden = false;
 
   if (wineTriggered && truffleTriggered) {
-    const pick = Math.random() < 0.5 ? 22 : 47;
-    resultDrink = drinks.find(d => d.id === pick);
-    isHidden = true;
+    if (Math.random() < 0.10) {
+      const pick = Math.random() < 0.5 ? 22 : 47;
+      resultDrink = drinks.find(d => d.id === pick);
+      isHidden = true;
+    }
   } else if (wineTriggered) {
     resultDrink = drinks.find(d => d.id === 22);
     isHidden = true;
   } else if (truffleTriggered) {
     resultDrink = drinks.find(d => d.id === 47);
     isHidden = true;
-  } else {
+  }
+
+  if (!isHidden) {
     const ranked = matchAllNormal(userVec);
     resultDrink = pickByWeightedTop(ranked);
     isHidden = false;
@@ -1557,7 +1577,6 @@ function generateResult() {
   const similar = getSimilarDrinks(ranked, resultDrink, true);
   return { drink: resultDrink, isHidden: true, rarePercent: displayRarePercent(), similar };
 }
-
 /* ============================================================
    颜色工具
    ============================================================ */
